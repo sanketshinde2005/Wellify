@@ -30,6 +30,7 @@ function App() {
   };
 
   return (
+<<<<<<< HEAD
     <div className="flex min-h-screen bg-base-100">
       {/* Sidebar component with props including toggle handler */}
       <Sidebar
@@ -60,6 +61,18 @@ function App() {
           </Routes>
         </div>
       </main>
+=======
+    <div className="App">
+
+      <NavBar/>
+      <Routes>
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/homepage" element={<HomePage />} />
+
+
+      </Routes>
+>>>>>>> ac74d3029b1c5bf6c843c3ea08ee210803e633d2
     </div>
   );
 }
