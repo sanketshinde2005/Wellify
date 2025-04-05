@@ -2,62 +2,35 @@ import React from 'react';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 p-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="min-h-[95vh] bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex items-center justify-center px-4 rounded-3xl">
+      <div className="bg-white rounded-3xl shadow-2xl flex flex-col md:flex-row items-center justify-between w-full max-w-6xl p-8 md:p-12 transition-all duration-500">
 
-        {/* 1. User Profile */}
-        <div className="bg-white shadow-lg rounded-xl p-4">
-          <h2 className="text-xl font-semibold mb-4 text-blue-600">User Profile</h2>
-          <div className="flex flex-col items-center text-center">
-            <img
-              src="https://via.placeholder.com/100"
-              alt="User"
-              className="rounded-full w-24 h-24 mb-3"
-            />
-            <h3 className="text-lg font-medium">John Doe</h3>
-            <p className="text-sm text-gray-500">john.doe@email.com</p>
-            <p className="mt-2 text-sm text-gray-600">Role: Patient</p>
-          </div>
+        {/* Left Content */}
+        <div className="md:w-1/2 space-y-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
+            Welcome to <span className="text-blue-600">ZeeCare Medical Institute</span>
+          </h1>
+          <h2 className="text-2xl font-semibold text-gray-700">
+            Your Trusted Healthcare Provider
+          </h2>
+          <p className="text-gray-600 text-lg leading-relaxed">
+            ZeeCare is a state-of-the-art medical facility offering compassionate, expert care.
+            Our professionals deliver personalized treatment tailored to your needs — ensuring
+            a smooth and healthy journey toward wellness.
+          </p>
+          <button className="bg-blue-600 text-white px-6 py-3 rounded-full shadow hover:bg-blue-700 transition">
+            Book Appointment
+          </button>
         </div>
 
-        {/* 2. Medicine Section */}
-        <div className="bg-white shadow-lg rounded-xl p-4">
-          <h2 className="text-xl font-semibold mb-4 text-green-600">Medicines</h2>
-          <ul className="space-y-2">
-            <li className="p-2 border rounded-lg bg-green-50">
-              Paracetamol - 500mg
-              <p className="text-xs text-gray-500">Take twice a day</p>
-            </li>
-            <li className="p-2 border rounded-lg bg-green-50">
-              Vitamin C - 1000mg
-              <p className="text-xs text-gray-500">Once daily</p>
-            </li>
-            <li className="p-2 border rounded-lg bg-green-50">
-              Amoxicillin - 250mg
-              <p className="text-xs text-gray-500">Before meals</p>
-            </li>
-          </ul>
+        {/* Right Image */}
+        <div className="md:w-1/2 mt-10 md:mt-0 flex justify-center">
+          <img
+            src="/logo.jpg"
+            alt="Doctor Illustration"
+            className="w-72 md:w-96 drop-shadow-lg"
+          />
         </div>
-
-        {/* 3. AI Chatbot */}
-        <div className="bg-white shadow-lg rounded-xl p-4 flex flex-col">
-          <h2 className="text-xl font-semibold mb-4 text-purple-600">AI Chatbot</h2>
-          <div className="flex-1 bg-gray-100 rounded-lg p-3 overflow-y-auto mb-3">
-            <p className="text-sm text-gray-700">Bot: How can I help you today?</p>
-            {/* Chat messages can be appended here */}
-          </div>
-          <div className="flex">
-            <input
-              type="text"
-              placeholder="Type your question..."
-              className="flex-1 px-3 py-2 rounded-l-lg border border-gray-300 focus:outline-none"
-            />
-            <button className="bg-purple-500 text-white px-4 py-2 rounded-r-lg hover:bg-purple-600">
-              Send
-            </button>
-          </div>
-        </div>
-
       </div>
     </div>
   );
