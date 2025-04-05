@@ -241,13 +241,12 @@ const Sidebar = ({ isLoggedIn, onLogout, onToggle }) => {
       ${isCollapsed ? 'w-20' : 'w-72'}
     `}>
       {/* Logo Header */}
-      <div className="navbar bg-base-100 border-b border-base-200 px-4 py-6 flex justify-between items-center">
+      <div className="navbar bg-base-100 border-b border-base-200 px-4 py-6 flex justify-between items-center relative">
         {!isCollapsed ? (
           <div className="flex items-center gap-3">
             <div className="avatar">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
                 {/* <Heart className="h-6 w-6 text-primary-content" fill="white" strokeWidth={1} /> */}
-
               </div>
             </div>
             <div>
@@ -264,7 +263,7 @@ const Sidebar = ({ isLoggedIn, onLogout, onToggle }) => {
           <div className="flex justify-center w-full">
             <div className="avatar">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <Heart className="h-7 w-7 text-primary-content" fill="white" strokeWidth={1} />
+                {/* <Heart className="h-7 w-7 text-primary-content" fill="white" strokeWidth={1} /> */}
               </div>
             </div>
           </div>
@@ -273,7 +272,9 @@ const Sidebar = ({ isLoggedIn, onLogout, onToggle }) => {
         {/* Collapse Toggle */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="btn btn-circle btn-ghost btn-sm hover:bg-base-200"
+          className={`btn btn-circle btn-ghost btn-sm hover:bg-base-200 absolute transition-all duration-300 ${
+            isCollapsed ? 'top-6 left-4' : 'top-6 right-4'
+          }`}
           aria-label="Toggle sidebar width"
         >
           {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
@@ -292,15 +293,15 @@ const Sidebar = ({ isLoggedIn, onLogout, onToggle }) => {
           <>
             <NavSection title="Discover" icon={Home} index={0}>
               <NavItem to="/" icon={Home} label="Home" />
-              <NavItem to="/about" icon={Info} label="Book Appointment" />
+              <NavItem to="/appoint" icon={Info} label="Book Appointment" />
               <NavItem to="/services" icon={Activity} label="Predict Disease" />
+              <NavItem to="/UpcomingAppointments" icon={FileText} label="upcoming appointments  " />
             </NavSection>
 
             <NavSection title="Resources" icon={Package} index={3}>
-              <NavItem to="/health-library" icon={FileText} label="Health Library" />
               <NavItem to="/wellness-tips" icon={Apple} label="Wellness Tips" />
               <NavItem to="/emergency" icon={AlertCircle} label="Emergency Info" />
-              <NavItem to="/contact" icon={Phone} label="Contact Us" />
+              <NavItem to="/welcome" icon={Phone} label="Contact Us" />
             </NavSection>
 
             <NavSection title="Account" icon={User} index={7}>
