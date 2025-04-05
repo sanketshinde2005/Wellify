@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Home, 
@@ -12,12 +12,18 @@ import {
   User, 
   LogOut,
   Menu,
-  Settings
+  Settings,
+  X
 } from 'lucide-react';
 
 const Sidebar = ({ isLoggedIn, onLogout }) => {
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Close sidebar when route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
 
   const isActive = (path) => {
     return location.pathname === path;
@@ -42,18 +48,28 @@ const Sidebar = ({ isLoggedIn, onLogout }) => {
 
   return (
     <>
-      {/* Mobile menu button */}
+      {/* Menu Toggle Button - Always visible */}
       <button 
-        className="fixed top-4 left-4 z-50 lg:hidden bg-blue-500 text-white p-2 rounded-lg"
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        className="fixed top-4 left-4 z-50 bg-blue-500 text-white p-2 rounded-lg shadow-md hover:bg-blue-600 transition-colors"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? "Close menu" : "Open menu"}
       >
-        <Menu size={24} />
+        {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
+
+      {/* Overlay - when sidebar is open */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        ></div>
+      )}
 
       {/* Sidebar */}
       <aside 
-        className={`fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-blue-500 to-blue-700 text-white shadow-xl z-40 transform transition-transform duration-300 ease-in-out ${
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-blue-500 to-blue-700 text-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Logo and Brand */}
@@ -65,11 +81,21 @@ const Sidebar = ({ isLoggedIn, onLogout }) => {
           <p className="text-xs text-blue-100 mt-1">Healthcare Solutions</p>
         </div>
 
+        {/* Close button inside sidebar */}
+        <button 
+          className="absolute top-6 right-4 text-blue-100 hover:text-white transition-colors"
+           onClick={() => setIsOpen(false)}
+          aria-label="Close sidebar"
+        >
+          <X size={20} />
+        </button>
+        
         {/* Navigation */}
-        <nav className="mt-4 px-3 space-y-1">
+        <nav className="mt-4 px-3 space-y-1 overflow-y-auto max-h-[calc(100vh-200px)]">
           {/* Public Navigation */}
           {!isLoggedIn && (
             <>
+              <NavItem to="/homepage" icon={Home} label="Home" />
               <NavItem to="/about" icon={Info} label="About Us" />
               <NavItem to="/services" icon={Activity} label="Services" />
               <NavItem to="/contact" icon={Phone} label="Contact Us" />
@@ -89,7 +115,10 @@ const Sidebar = ({ isLoggedIn, onLogout }) => {
               <NavItem to="/settings" icon={Settings} label="Settings" />
               <div className="border-t border-blue-400 my-4"></div>
               <button 
-                onClick={onLogout} 
+                onClick={() => {
+                  setIsOpen(false);
+                  onLogout();
+                }} 
                 className="flex items-center space-x-3 px-4 py-3 rounded-lg w-full text-blue-50 hover:bg-blue-600 transition-colors"
               >
                 <LogOut size={20} />
