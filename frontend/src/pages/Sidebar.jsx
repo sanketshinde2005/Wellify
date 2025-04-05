@@ -293,15 +293,15 @@ const Sidebar = ({ isLoggedIn, onLogout, onToggle }) => {
           <>
             <NavSection title="Discover" icon={Home} index={0}>
               <NavItem to="/" icon={Home} label="Home" />
-              <NavItem to="/home" icon={Info} label="Book Appointment" />
+              <NavItem to="/appoint" icon={Info} label="Book Appointment" />
               <NavItem to="/services" icon={Activity} label="Predict Disease" />
+              <NavItem to="/UpcomingAppointments" icon={FileText} label="upcoming appointments  " />
             </NavSection>
 
             <NavSection title="Resources" icon={Package} index={3}>
-              <NavItem to="/health-library" icon={FileText} label="Health Library" />
               <NavItem to="/wellness-tips" icon={Apple} label="Wellness Tips" />
               <NavItem to="/emergency" icon={AlertCircle} label="Emergency Info" />
-              <NavItem to="/contact" icon={Phone} label="Contact Us" />
+              <NavItem to="/welcome" icon={Phone} label="Contact Us" />
             </NavSection>
 
             <NavSection title="Account" icon={User} index={7}>

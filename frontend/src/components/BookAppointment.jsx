@@ -1,7 +1,10 @@
+import Appointments from "./Appointments";
 
 export default function BookAppointment() {
     return (
-    <div>
-    </div>
-)
-}
+      <div>
+        <Appointments />
+      </div>
+    );
+  }
+  
