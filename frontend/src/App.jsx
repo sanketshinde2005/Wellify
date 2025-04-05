@@ -5,6 +5,7 @@ import RegisterPage from './components/SignUpPage';
 import LoginPage from './components/LoginPage';
 import HomePage from './pages/HomePage';
 import Sidebar from './pages/Sidebar';
+import BookAppointment from './components/BookAppointment';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -33,11 +34,11 @@ function App() {
     <div className="flex min-h-screen bg-base-100">
       {/* Sidebar component with props including toggle handler */}
       <Sidebar
-        isLoggedIn={isLoggedIn} 
-        onLogout={handleLogout} 
+        isLoggedIn={isLoggedIn}
+        onLogout={handleLogout}
         onToggle={handleSidebarToggle}
       />
-      
+
       {/* Main content area that shifts based on sidebar state */}
       <main className={`
         flex-1 transition-all duration-300 ease-in-out
@@ -52,10 +53,10 @@ function App() {
             <Route path="/homepage" element={<HomePage />} />
             {/* Add your other routes here */}
             {/* <Route path="/about" element={<div>About Us Page</div>} />
-            <Route path="/services" element={<div>Our Services Page</div>} />
-            <Route path="/dashboard" element={<div>Dashboard Page</div>} />
-            <Route path="/appointments" element={<div>Appointments Page</div>} />
-            <Route path="/notifications" element={<div>Notifications Page</div>} />
+            <Route path="/services" element={<div>Our Services Page</div>} /> */}
+            <Route path="/home" element={<BookAppointment />} />
+            {/* <Route path="/appointments" element={<div>Appointments Page</div>} /> */}
+            {/* <Route path="/notifications" element={<div>Notifications Page</div>} />
             <Route path="/messages" element={<div>Messages Page</div>} /> */}
           </Routes>
         </div>

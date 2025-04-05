@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { UserPlus, User, Lock, Mail, Shield, CheckCircle } from 'lucide-react';
 
-const SignupPage = () => {
+const SignUpPage = () => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -35,6 +35,7 @@ const SignupPage = () => {
     return true;
   };
 
+
   const validateStep2 = () => {
     if (!formData.password || !formData.confirmPassword) {
       setError('Please fill in all required fields');
@@ -44,6 +45,7 @@ const SignupPage = () => {
       setError('Password must be at least 8 characters long');
       return false;
     }
+   
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return false;
@@ -305,4 +307,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default SignUpPage;
