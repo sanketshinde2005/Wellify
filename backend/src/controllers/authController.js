@@ -109,25 +109,66 @@ export const updateProfile = async (req, res) => {
             return res.status(400).json({ message: "User not found" });
         }
 
-        // Extract fields from request
-        const { fullName, currentPassword, newPassword, email } = req.body;
+        const {
+            fullName,
+            mobilenum,
+            email,
+            profilePic,
+            clinicAddress,
+            qualification,
+            specialdegree,
+            specialization,
+            about,
+            experience,
+            patientsTreated,
+            Medicaldetails,
+            currentPassword,
+            newPassword,
+            age,
+            HomeAddress,
+        } = req.body;
 
-        // 
-        const curr_user = await User.findById(userId);
-        let updatedFields = [];
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found in DB" });
+        }
+
+        // Start building update fields
+        const updatedFields = {};
+
         if (fullName) updatedFields.fullName = fullName;
-        if (mobilenumber) updatedFields.mobilenum = mobilenumber;
+        if (mobilenum) updatedFields.mobilenum = mobilenum;
         if (email) updatedFields.email = email;
+        if (profilePic) updatedFields.profilePic = profilePic;
+        if (clinicAddress) updatedFields.clinicAddress = clinicAddress;
+        if (qualification) updatedFields.qualification = qualification;
+        if (specialdegree) updatedFields.specialdegree = specialdegree;
+        if (specialization) updatedFields.specialization = specialization;
+        if (about) updatedFields.about = about;
+        if (experience) updatedFields.experience = experience;
+        if (patientsTreated) updatedFields.patientsTreated = patientsTreated;
+        if (HomeAddress) updatedFields.HomeAddress = HomeAddress;
+        if (age) updatedFields.Medicaldetails = { ...user.Medicaldetails, age };
 
-        if (currentPassword && newPassword && currentPassword !== newPassword) {
-            const isMatch = await bcrypt.compare(currentPassword, curr_user.password);
+        // Handle nested medical details
+        if (Medicaldetails) {
+            updatedFields.Medicaldetails = {
+                ...user.Medicaldetails,
+                ...Medicaldetails,
+            };
+        }
+
+        // Handle password change
+        if (currentPassword && newPassword) {
+            const isMatch = await bcrypt.compare(currentPassword, user.password);
             if (!isMatch) {
                 return res.status(400).json({ message: "Current password is incorrect" });
             }
             const salt = await bcrypt.genSalt(10);
             updatedFields.password = await bcrypt.hash(newPassword, salt);
         }
-        // Update user only with provided fields
+
+        // Update user document
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             { $set: updatedFields },
@@ -136,10 +177,11 @@ export const updateProfile = async (req, res) => {
 
         res.status(200).json(updatedUser);
     } catch (error) {
-        console.log("Error in Update Profile Controller:", error);
+        console.error("Error in updateProfile:", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
 
 
 export const checkAuth = (req, res) => {

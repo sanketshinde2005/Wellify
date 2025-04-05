@@ -1,23 +1,27 @@
 import { useState } from "react";
 import { Edit2, Save, X, User, HeartPulse } from "lucide-react";
+import { useAuthstore } from "../store/useAuthstore";
+import { Loader2 } from "lucide-react";
 
-export default function PatientProfile({ userData }) {
+export default function PatientProfile() {
+  const { authUser, update, isUpdatingProfile } = useAuthstore();
   const [editing, setEditing] = useState(false);
+
   const [formData, setFormData] = useState({
-    fullName: userData?.fullName || "Prathamesh Jadhav",
-    proffession: userData?.proffession || "Software Engineer",
-    mobilenum: userData?.mobilenum || "+91 9876543210",
-    email: userData?.email || "prathamesh@wellify.com",
-    profilePic: userData?.profilePic || "https://i.pravatar.cc/150?img=11",
+    fullName: authUser?.fullName || "",
+    proffession: authUser?.proffession || "",
+    mobilenum: authUser?.mobilenum || "",
+    email: authUser?.email || "",
+    profilePic: authUser?.profilePic || "",
+    HomeAddress: authUser?.HomeAddress || "",
     Medicaldetails: {
-      height: userData?.Medicaldetails?.height || 175,
-      weight: userData?.Medicaldetails?.weight || 68,
-      bloodGroup: userData?.Medicaldetails?.bloodGroup || "O+",
+      age: authUser?.Medicaldetails?.age || 0,
+      height: authUser?.Medicaldetails?.height || 0,
+      weight: authUser?.Medicaldetails?.weight || 0,
+      bloodGroup: authUser?.Medicaldetails?.bloodGroup || "",
     },
-    medicalHistory: userData?.medicalHistory || "Allergy, Migraine",
-    age: userData?.age || 23,
-    gender: userData?.gender || "Male",
-    address: userData?.address || "456, Wellness Nagar, Nashik",
+    medicalHistory: authUser?.medicalHistory || "",
+    gender: authUser?.gender || "Other",
   });
 
   const handleInputChange = (e) => {
@@ -36,167 +40,219 @@ export default function PatientProfile({ userData }) {
     }
   };
 
-  const handleSave = () => {
-    console.log("Saved:", formData);
+  const handleSave = async () => {
+    await update(formData);
     setEditing(false);
   };
 
   const handleCancel = () => {
     setEditing(false);
+    setFormData({
+      fullName: authUser?.fullName || "",
+      proffession: authUser?.proffession || "",
+      mobilenum: authUser?.mobilenum || "",
+      email: authUser?.email || "",
+      profilePic: authUser?.profilePic || "",
+      HomeAddress: authUser?.HomeAddress || "",
+      Medicaldetails: {
+        age: authUser?.Medicaldetails?.age || 0,
+        height: authUser?.Medicaldetails?.height || 0,
+        weight: authUser?.Medicaldetails?.weight || 0,
+        bloodGroup: authUser?.Medicaldetails?.bloodGroup || "",
+      },
+      medicalHistory: authUser?.medicalHistory || "",
+      gender: authUser?.gender || "Other",
+    });
   };
 
   return (
-    <div className="min-h-screen bg-blue-50 py-10 px-4">
-      <div className="max-w-6xl mx-auto card bg-white shadow-xl rounded-2xl overflow-hidden border border-blue-200">
-        {/* Header */}
-        <div className="bg-blue-200 text-blue-900 py-8 px-6 flex flex-col md:flex-row items-center gap-6">
-          <div className="avatar">
-            <div className="w-28 rounded-full ring ring-white ring-offset-blue-100 ring-offset-2">
-              <img src={formData.profilePic} />
+    <div className="py-6 px-4 w-full max-w-4xl mx-auto">
+      <div className="card bg-base-100 shadow-xl">
+        <div className="card-body p-0">
+          <div className="bg-primary/10 text-primary p-6 flex flex-col md:flex-row items-center gap-6">
+            <div className="avatar">
+              <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                <img
+                  src={formData.profilePic || "https://i.pravatar.cc/150?img=11"}
+                  alt="Profile"
+                />
+              </div>
             </div>
-          </div>
-          <div className="flex-1">
-            {editing ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                  name="fullName"
-                  className="input input-bordered w-full"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                />
-                <input
-                  name="proffession"
-                  className="input input-bordered w-full"
-                  value={formData.proffession}
-                  onChange={handleInputChange}
-                />
-              </div>
-            ) : (
-              <>
-                <h2 className="text-2xl font-bold">{formData.fullName}</h2>
-                <p className="text-md">{formData.proffession}</p>
-                <p className="text-sm opacity-80">
-                  Age: {formData.age} • {formData.gender}
-                </p>
-              </>
-            )}
-          </div>
-          <div className="flex gap-2">
-            {editing ? (
-              <>
-                <button onClick={handleSave} className="btn btn-success btn-sm">
-                  <Save size={18} /> Save
-                </button>
-                <button onClick={handleCancel} className="btn btn-outline btn-sm">
-                  <X size={18} /> Cancel
-                </button>
-              </>
-            ) : (
-              <button onClick={() => setEditing(true)} className="btn btn-primary btn-sm">
-                <Edit2 size={18} /> Edit
-              </button>
-            )}
-          </div>
-        </div>
 
-        {/* Main Grid */}
-        <div className="grid md:grid-cols-2 gap-6 p-6 text-blue-900">
-          {/* Personal Info */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold flex items-center gap-2 text-blue-700">
-              <User size={20} /> Personal Information
-            </h3>
-            {[
-              ["email", "Email"],
-              ["mobilenum", "Mobile Number"],
-              ["address", "Address"],
-              ["age", "Age"],
-            ].map(([name, label]) => (
-              <div key={name}>
-                <label className="label text-sm">{label}</label>
-                {editing ? (
-                  name === "address" ? (
-                    <textarea
-                      name={name}
-                      className="textarea textarea-bordered w-full"
-                      value={formData[name]}
-                      onChange={handleInputChange}
-                    />
-                  ) : (
-                    <input
-                      name={name}
-                      className="input input-bordered w-full"
-                      value={formData[name]}
-                      onChange={handleInputChange}
-                    />
-                  )
-                ) : (
-                  <p>{formData[name]}</p>
-                )}
-              </div>
-            ))}
-            {/* Gender select */}
-            <div>
-              <label className="label text-sm">Gender</label>
+            <div className="flex-1">
               {editing ? (
-                <select
-                  name="gender"
-                  className="select select-bordered w-full"
-                  value={formData.gender}
-                  onChange={handleInputChange}
-                >
-                  <option>Male</option>
-                  <option>Female</option>
-                  <option>Other</option>
-                </select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input
+                    name="fullName"
+                    className="input input-bordered w-full"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                  />
+                  <input
+                    name="proffession"
+                    className="input input-bordered w-full"
+                    value={formData.proffession}
+                    onChange={handleInputChange}
+                  />
+                </div>
               ) : (
-                <p>{formData.gender}</p>
+                <>
+                  <h2 className="text-2xl font-bold">{formData.fullName}</h2>
+                  <p className="text-md">{formData.proffession}</p>
+                  <p className="text-sm opacity-80">
+                    Age: {formData.Medicaldetails.age} • {formData.gender}
+                  </p>
+                </>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              {editing ? (
+                <>
+                  <button
+                    onClick={handleSave}
+                    className="btn btn-success btn-sm"
+                    disabled={isUpdatingProfile}
+                  >
+                    {isUpdatingProfile ? (
+                      <Loader2 className="animate-spin" size={18} />
+                    ) : (
+                      <Save size={18} />
+                    )}
+                    Save
+                  </button>
+                  <button
+                    onClick={handleCancel}
+                    className="btn btn-outline btn-sm"
+                  >
+                    <X size={18} /> Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setEditing(true)}
+                  className="btn btn-primary btn-sm"
+                >
+                  <Edit2 size={18} /> Edit
+                </button>
               )}
             </div>
           </div>
 
-          {/* Medical Info */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold flex items-center gap-2 text-blue-700">
-              <HeartPulse size={20} /> Medical Information
-            </h3>
-            {[
-              ["Medicaldetails.height", "Height (cm)"],
-              ["Medicaldetails.weight", "Weight (kg)"],
-              ["Medicaldetails.bloodGroup", "Blood Group"],
-            ].map(([name, label]) => (
-              <div key={name}>
-                <label className="label text-sm">{label}</label>
+          {/* Main Grid */}
+          <div className="grid md:grid-cols-2 gap-6 p-6">
+            {/* Personal Info */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold flex items-center gap-2 text-primary">
+                <User size={20} /> Personal Information
+              </h3>
+              {[
+                ["email", "Email"],
+                ["mobilenum", "Mobile Number"],
+                ["HomeAddress", "Home Address"],
+              ].map(([name, label]) => (
+                <div key={name}>
+                  <label className="label text-sm font-medium">{label}</label>
+                  {editing ? (
+                    name === "HomeAddress" ? (
+                      <textarea
+                        name={name}
+                        className="textarea textarea-bordered w-full"
+                        value={formData[name]}
+                        onChange={handleInputChange}
+                      />
+                    ) : (
+                      <input
+                        name={name}
+                        className="input input-bordered w-full"
+                        value={formData[name]}
+                        onChange={handleInputChange}
+                      />
+                    )
+                  ) : (
+                    <p className="py-1">{formData[name]}</p>
+                  )}
+                </div>
+              ))}
+
+              <div>
+                <label className="label text-sm font-medium">Age</label>
                 {editing ? (
                   <input
-                    name={name}
+                    name="Medicaldetails.age"
                     className="input input-bordered w-full"
-                    value={formData.Medicaldetails[name.split(".")[1]]}
+                    value={formData.Medicaldetails.age}
                     onChange={handleInputChange}
                   />
                 ) : (
-                  <p>{formData.Medicaldetails[name.split(".")[1]]}</p>
+                  <p className="py-1">{formData.Medicaldetails.age}</p>
                 )}
               </div>
-            ))}
 
-            {/* Medical History */}
-            <div>
-              <label className="label text-sm">Medical History</label>
-              {editing ? (
-                <textarea
-                  name="medicalHistory"
-                  className="textarea textarea-bordered w-full"
-                  value={formData.medicalHistory}
-                  onChange={handleInputChange}
-                />
-              ) : (
-                <p>{formData.medicalHistory}</p>
-              )}
+              <div>
+                <label className="label text-sm font-medium">Gender</label>
+                {editing ? (
+                  <select
+                    name="gender"
+                    className="select select-bordered w-full"
+                    value={formData.gender}
+                    onChange={handleInputChange}
+                  >
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                  </select>
+                ) : (
+                  <p className="py-1">{formData.gender}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Medical Info */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold flex items-center gap-2 text-primary">
+                <HeartPulse size={20} /> Medical Information
+              </h3>
+              {[
+                ["Medicaldetails.height", "Height (cm)"],
+                ["Medicaldetails.weight", "Weight (kg)"],
+                ["Medicaldetails.bloodGroup", "Blood Group"],
+              ].map(([name, label]) => (
+                <div key={name}>
+                  <label className="label text-sm font-medium">{label}</label>
+                  {editing ? (
+                    <input
+                      name={name}
+                      className="input input-bordered w-full"
+                      value={formData.Medicaldetails[name.split(".")[1]]}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    <p className="py-1">
+                      {formData.Medicaldetails[name.split(".")[1]]}
+                    </p>
+                  )}
+                </div>
+              ))}
+              <div>
+                <label className="label text-sm font-medium">
+                  Medical History
+                </label>
+                {editing ? (
+                  <textarea
+                    name="medicalHistory"
+                    className="textarea textarea-bordered w-full"
+                    value={formData.medicalHistory}
+                    onChange={handleInputChange}
+                  />
+                ) : (
+                  <p className="py-1">{formData.medicalHistory}</p>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};

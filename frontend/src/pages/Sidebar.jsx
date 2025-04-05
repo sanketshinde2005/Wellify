@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import {
   Home,
   LogIn,
@@ -38,6 +38,8 @@ const Sidebar = ({ onToggle }) => {
   // Check if user is logged in based on authUser
   const isLoggedIn = !!authUser;
 
+  const navigate = useNavigate();
+
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [hoveredSection, setHoveredSection] = useState(null);
@@ -54,25 +56,19 @@ const Sidebar = ({ onToggle }) => {
 
   const isActive = (path) => location.pathname === path;
 
-  // const Heartbeat = ({ size = 20 }) => (
-  //   <svg
-  //     xmlns="http://www.w3.org/2000/svg"
-  //     width={size}
-  //     height={size}
-  //     viewBox="0 0 24 24"
-  //     fill="none"
-  //     stroke="currentColor"
-  //     strokeWidth="2"
-  //     strokeLinecap="round"
-  //     strokeLinejoin="round"
-  //     className="group-hover:stroke-primary transition-colors duration-300"
-  //   >
-  //     <path d="M3 12h4l3-9 4 18 3-9h4" />
-  //   </svg>
-  // );
+  const handleLogout = async () => {
+    await logout(); // Call the logout function from auth store
+    navigate("/")
+  };
 
-  const handleLogout = () => {
-    logout(); // Call the logout function from auth store
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  const handleLogoClick = () => {
+    if (isCollapsed) {
+      setIsCollapsed(false);
+    }
   };
 
   const NavItem = ({ to, icon, label, badge, index }) => {
@@ -155,7 +151,7 @@ const Sidebar = ({ onToggle }) => {
           </div>
           <div>
             <h3 className="font-bold text-base-content">{authUser?.fullName || 'User'}</h3>
-            {/* <p className="text-xs text-base-content/60">Premium Member</p> */}
+            <p className='text-xs text-base-content/60'>{authUser.proffession}</p>
           </div>
         </div>
       ) : (
@@ -177,7 +173,9 @@ const Sidebar = ({ onToggle }) => {
         {!isCollapsed ? (
           <div className="flex items-center gap-3">
             <div className="avatar">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center"></div>
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center ring ring-primary ring-offset-base-100 ring-offset-2">
+                <img src="/logo.jpg" alt="logo" className='w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center ring-1' />
+              </div>
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Wellify</h1>
@@ -185,25 +183,32 @@ const Sidebar = ({ onToggle }) => {
             </div>
           </div>
         ) : (
-          <div className="flex justify-center w-full">
+          <div
+            className="flex justify-center w-full cursor-pointer"
+            onClick={handleLogoClick}
+          >
             <div className="avatar">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center"></div>
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <img src="/logo.jpg" alt="logo" className='w-10 h-10 rounded-full' />
+              </div>
             </div>
           </div>
         )}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className={`btn btn-circle btn-ghost btn-sm hover:bg-base-200 absolute transition-all duration-300 ${isCollapsed ? 'top-6 left-4' : 'top-6 right-4'}`}
-          aria-label="Toggle sidebar width"
-        >
-          {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-        </button>
+        {/* Only show the toggle button when sidebar is expanded */}
+        {!isCollapsed && (
+          <button
+            onClick={toggleSidebar}
+            className="btn btn-circle btn-ghost btn-sm hover:bg-base-200 absolute transition-all duration-300 top-6 right-4"
+            aria-label="Toggle sidebar width"
+          >
+            <ChevronLeft size={16} />
+          </button>
+        )}
       </div>
 
       {isLoggedIn && <UserProfile />}
-      {/* {isLoggedIn && <HealthStats />} */}
 
-      <div className={`flex-1 overflow-y-auto py-4 ${isCollapsed ? 'px-2' : 'px-3'}`}>
+      <div className={`flex-1 overflow-y-auto py-4 ${isCollapsed ? 'px-2' : 'px-3'}`} style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(156, 163, 175, 0.2) rgba(255, 255, 255, 0.5)' }}>
         {!isLoggedIn ? (
           <>
             <NavSection title="Main Menu" icon={Home} index={0}>
@@ -214,8 +219,8 @@ const Sidebar = ({ onToggle }) => {
               <NavItem to="/contactus" icon={Phone} label="Contact Us" />
             </NavSection>
             <NavSection title="Analytics" icon={PieChart} index={9}>
-              <NavItem to="/health-insights" icon={Settings} label="Settings" />
-              <NavItem to="/progress" icon={UserPlus} label="SignUp" />
+              <NavItem to="/settings" icon={Settings} label="Settings" />
+              <NavItem to="/signup" icon={UserPlus} label="SignUp" />
               <NavItem to="/login" icon={LogIn} label="Login" />
             </NavSection>
           </>
@@ -223,9 +228,9 @@ const Sidebar = ({ onToggle }) => {
           <>
             <NavSection title="Discover" icon={Home} index={0}>
               <NavItem to="/" icon={Home} label="Home" />
-              <NavItem to="/appoint" icon={Info} label="Book Appointment" />
+              {authUser.proffession === "patient" ? <NavItem to="/appoint" icon={Info} label="Book Appointment" /> : <></>}
               {authUser.proffession === "doctor" ? <NavItem to="/predict" icon={Activity} label="Predict Disease" /> : <></>}
-              <NavItem to="/UpcomingAppointments" icon={FileText} label="Upcoming Appointments" />
+              {authUser.proffession === "doctor" ? <NavItem to="/UpcomingAppointments" icon={FileText} label="Upcoming Appointments" /> : <></>}
             </NavSection>
             <NavSection title="Resources" icon={Package} index={3}>
               <NavItem to="/emergency" icon={AlertCircle} label="Emergency Info" />
@@ -233,9 +238,8 @@ const Sidebar = ({ onToggle }) => {
               <NavItem to="/contactus" icon={Phone} label="Contact Us" />
             </NavSection>
             <NavSection title="Account" icon={User} index={7}>
-              <NavItem to="/health-insights" icon={Settings} label="Settings" />
-              <NavItem to="/ProfilePage" icon={UserCircle} label="Profile" />
-              {/* <NavItem to="/signup" icon={LogOut} label="LogOut" /> */}
+              <NavItem to="/settings" icon={Settings} label="Settings" />
+              <NavItem to="/profile" icon={UserCircle} label="Profile" />
             </NavSection>
           </>
         )}

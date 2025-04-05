@@ -6,7 +6,7 @@ import { useAuthstore } from '../store/useAuthstore';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
-  const { register, isregistering } = useAuthstore();
+  const { signup, isLoggingIn } = useAuthstore();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -78,7 +78,7 @@ const SignUpPage = () => {
     }
 
     const { fullName, email, password, mobilenum, proffession } = formData;
-    await register({ fullName, email, password, mobilenum, proffession });
+    await signup({ fullName, email, password, mobilenum, proffession });
 
     // Optional: Redirect after success
     navigate('/dashboard'); // adjust route as needed
@@ -116,7 +116,7 @@ const SignUpPage = () => {
                   <div>
                     <label className="block text-sm font-medium mb-1">Full Name</label>
                     <div className="relative">
-                      <User className="absolute left-3 top-3 text-base-content/50" size={18} />
+                      <User className="absolute left-3 top-3 text-base-content/50 z-20" size={18} />
                       <input
                         type="text"
                         name="fullName"
@@ -131,7 +131,7 @@ const SignUpPage = () => {
                   <div>
                     <label className="block text-sm font-medium mb-1">Email</label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 text-base-content/50" size={18} />
+                      <Mail className="absolute left-3 top-3 text-base-content/50 z-10" size={18} />
                       <input
                         type="email"
                         name="email"
@@ -150,8 +150,8 @@ const SignUpPage = () => {
                         <label
                           key={role}
                           className={`flex items-center justify-center p-3 border rounded-lg cursor-pointer transition-colors ${formData.proffession === role
-                              ? 'bg-primary/10 border-primary text-primary'
-                              : 'border-base-300 hover:bg-base-200'
+                            ? 'bg-primary/10 border-primary text-primary'
+                            : 'border-base-300 hover:bg-base-200'
                             }`}
                         >
                           <input
@@ -230,8 +230,8 @@ const SignUpPage = () => {
                     <button type="button" onClick={prevStep} className="btn btn-outline w-1/2">
                       Back
                     </button>
-                    <button type="submit" disabled={isregistering} className="btn btn-primary w-1/2">
-                      {isregistering ? 'Creating...' : 'Create Account'}
+                    <button type="submit" disabled={isLoggingIn} className="btn btn-primary w-1/2">
+                      {isLoggingIn ? 'Creating...' : 'Create Account'}
                     </button>
                   </div>
                 </>

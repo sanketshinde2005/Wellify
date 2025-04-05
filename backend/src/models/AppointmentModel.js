@@ -2,22 +2,14 @@ import mongoose from "mongoose";
 
 const appointmentSchema = new mongoose.Schema(
   {
-    patient: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     patientId: {
-      type: String,
-      required: true,
-    },
-    doctor: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "User", // Reference to the User model for the patient
       required: true,
     },
     doctorId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // Reference to the User model for the doctor
       required: true,
     },
     date: {
@@ -35,7 +27,7 @@ const appointmentSchema = new mongoose.Schema(
     },
     reason: {
       type: String,
-      required: true,
+      default: "",
     },
     notes: {
       type: String,

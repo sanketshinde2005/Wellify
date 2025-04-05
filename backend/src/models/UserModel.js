@@ -30,7 +30,43 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: "",
         },
+        clinicAddress: {
+            type: String,
+            default: "",
+        },
+        qualification: {
+            type: String,
+            default: "",
+        },
+        specialdegree: {
+            type: String,
+            default: "none",
+        },
+        specialization: [{
+            type: String,
+            default: "",
+        }],
+        about: {
+            type: String,
+            default: "Nothing Added",
+        },
+        experience: {
+            type: Number,
+            default: 0,
+        },
+        patientsTreated: {
+            type: Number,
+            default: 0,
+        },
+        HomeAddress: {
+            type: String,
+            default: "",
+        },
         Medicaldetails: {
+            age: {
+                type: Number,
+                default: 0,
+            },
             height: {
                 type: Number,
                 default: 0,
@@ -43,7 +79,6 @@ const userSchema = new mongoose.Schema(
                 type: String,
                 default: "",
             },
-
         }
     },
     { timestamps: true }

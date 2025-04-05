@@ -1,12 +1,11 @@
 import User from "../models/UserModel.js";
-import bcrypt from "bcryptjs";
 
-export const getAllUsers = async (req, res) => {
+export const getAllDoctors = async (req, res) => {
   try {
     const loggedUserId = req.User?.id;
 
     if (!loggedUserId) {
-        console.error("Logged user ID not found in request:", req.User);
+      console.error("Logged user ID not found in request:", req.User);
       return res.status(401).json({ message: "Unauthorized access" });
     }
 
@@ -15,15 +14,18 @@ export const getAllUsers = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const allUsers = await User.find({ _id: { $ne: loggedUserId } }).select("-password");
+    const allDoctors = await User.find({
+      _id: { $ne: loggedUserId },
+      proffession: "doctor",
+    }).select("-password");
 
-    if (!allUsers || allUsers.length === 0) {
-      return res.status(404).json({ message: "No colleagues found" });
+    if (!allDoctors || allDoctors.length === 0) {
+      return res.status(404).json({ message: "No doctors found" });
     }
 
-    res.status(200).json(allUsers);
+    res.status(200).json(allDoctors);
   } catch (error) {
-    console.error("Error in getAllUsers:", error);
+    console.error("Error in getAllDoctors:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
