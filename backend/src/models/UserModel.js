@@ -44,7 +44,19 @@ const userSchema = new mongoose.Schema(
                 default: "",
             },
 
-        }
+        },
+        appointmentsAsPatient: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Appointment", // Reference to the Appointment model
+            },
+        ],
+        appointmentsAsDoctor: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Appointment", // Reference to the Appointment model
+            },
+        ],
     },
     { timestamps: true }
 )
