@@ -9,6 +9,7 @@ import { UpcomingAppointments } from './components/upcomingAppointments';
 import { useAuthstore } from './store/useAuthstore';
 import WelcomePage from './components/welcomePage';
 import { Toaster } from 'react-hot-toast';
+import PredictDisease from './components/PredictDisease';
 
 function App() {
   const { authUser, checkAuth } = useAuthstore();
@@ -44,6 +45,7 @@ function App() {
             <Route path="/signup" element={<RegisterPage />} />
             <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to={"/"} />} />
             <Route path="/welcome" element={<WelcomePage />} />
+            <Route path='/predict' element={<PredictDisease />} />
             <Route path="/appoint" element={authUser ? <BookAppointment /> : <Navigate to="/welcome" />} />
             <Route path="/UpcomingAppointments" element={authUser ? <UpcomingAppointments /> : <Navigate to="/welcome" />} />
           </Routes>

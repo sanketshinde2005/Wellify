@@ -224,7 +224,7 @@ const Sidebar = ({ onToggle }) => {
             <NavSection title="Discover" icon={Home} index={0}>
               <NavItem to="/" icon={Home} label="Home" />
               <NavItem to="/appoint" icon={Info} label="Book Appointment" />
-              {authUser.proffession === "doctor" ? <NavItem to="/services" icon={Activity} label="Predict Disease" /> : <></>}
+              {authUser.proffession === "doctor" ? <NavItem to="/predict" icon={Activity} label="Predict Disease" /> : <></>}
               <NavItem to="/UpcomingAppointments" icon={FileText} label="Upcoming Appointments" />
             </NavSection>
             <NavSection title="Resources" icon={Package} index={3}>
