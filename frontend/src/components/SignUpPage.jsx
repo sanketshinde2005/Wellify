@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { UserPlus, User, Lock, Mail, Shield, CheckCircle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserPlus, User, Lock, Mail, Shield } from 'lucide-react';
+import { useAuthstore } from '../store/useAuthstore';
+// import { useAuthstore } from '../store/useAuthStore.js'; // Adjust path as needed
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
+  const { register, isregistering } = useAuthstore();
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'patient',
-    agreeTerms: false
+    mobilenum: '',
+    proffession: 'patient',
+    agreeTerms: false,
   });
-  const [isLoading, setIsLoading] = useState(false);
+
   const [error, setError] = useState('');
   const [step, setStep] = useState(1);
 
@@ -29,19 +35,19 @@ const SignUpPage = () => {
       return false;
     }
     if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      setError('Please enter a valid email address');
+      setError('Invalid email address');
       return false;
     }
     return true;
   };
 
   const validateStep2 = () => {
-    if (!formData.password || !formData.confirmPassword) {
-      setError('Please fill in all required fields');
+    if (!formData.password || !formData.confirmPassword || !formData.mobilenum) {
+      setError('Please fill in all fields');
       return false;
     }
-    if (formData.password.length < 8) {
-      setError('Password must be at least 8 characters long');
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
       return false;
     }
     if (formData.password !== formData.confirmPassword) {
@@ -53,9 +59,7 @@ const SignUpPage = () => {
 
   const nextStep = () => {
     setError('');
-    if (step === 1 && validateStep1()) {
-      setStep(2);
-    }
+    if (step === 1 && validateStep1()) setStep(2);
   };
 
   const prevStep = () => {
@@ -63,27 +67,25 @@ const SignUpPage = () => {
     setStep(1);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     if (!validateStep2()) return;
-
     if (!formData.agreeTerms) {
       setError('You must agree to the Terms and Privacy Policy');
       return;
     }
 
-    setIsLoading(true);
+    const { fullName, email, password, mobilenum, proffession } = formData;
+    await register({ fullName, email, password, mobilenum, proffession });
 
-    setTimeout(() => {
-      console.log('Registration data:', formData);
-      setIsLoading(false);
-    }, 1500);
+    // Optional: Redirect after success
+    navigate('/dashboard'); // adjust route as needed
   };
 
   return (
-    <div className="max-h-[] min-w-[50vw] flex items-center justify-center bg-gradient-to-br from-base-100 to-base-200 ">
+    <div className="max-h-screen min-w-[50vw] flex items-center justify-center bg-gradient-to-br from-base-100 to-base-200">
       <div className="relative w-full max-w-md">
         <div className="absolute -top-16 -right-16 w-32 h-32 bg-primary rounded-full opacity-20"></div>
         <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-secondary rounded-full opacity-20"></div>
@@ -112,11 +114,9 @@ const SignUpPage = () => {
               {step === 1 ? (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-base-content mb-1">Full Name</label>
+                    <label className="block text-sm font-medium mb-1">Full Name</label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-base-content/50">
-                        <User size={18} className='z-10'/>
-                      </div>
+                      <User className="absolute left-3 top-3 text-base-content/50" size={18} />
                       <input
                         type="text"
                         name="fullName"
@@ -124,17 +124,14 @@ const SignUpPage = () => {
                         onChange={handleChange}
                         className="input input-bordered w-full pl-10"
                         placeholder="John Doe"
-                        required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-base-content mb-1">Email Address</label>
+                    <label className="block text-sm font-medium mb-1">Email</label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-base-content/50">
-                        <Mail size={18} className='z-10'/>
-                      </div>
+                      <Mail className="absolute left-3 top-3 text-base-content/50" size={18} />
                       <input
                         type="email"
                         name="email"
@@ -142,146 +139,108 @@ const SignUpPage = () => {
                         onChange={handleChange}
                         className="input input-bordered w-full pl-10"
                         placeholder="you@example.com"
-                        required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <p className="block text-sm font-medium text-base-content mb-2">I am registering as:</p>
+                    <p className="block text-sm font-medium mb-2">Registering as:</p>
                     <div className="grid grid-cols-2 gap-3">
-                      <label className={`flex items-center justify-center p-3 border rounded-lg cursor-pointer transition-colors ${formData.role === 'patient' ? 'bg-primary/10 border-primary text-primary' : 'border-base-300 hover:bg-base-200'}`}>
-                        <input
-                          type="radio"
-                          name="role"
-                          value="patient"
-                          checked={formData.role === 'patient'}
-                          onChange={handleChange}
-                          className="sr-only"
-                        />
-                        <User size={18} className="mr-2" />
-                        <span>Patient</span>
-                      </label>
-                      <label className={`flex items-center justify-center p-3 border rounded-lg cursor-pointer transition-colors ${formData.role === 'doctor' ? 'bg-primary/10 border-primary text-primary' : 'border-base-300 hover:bg-base-200'}`}>
-                        <input
-                          type="radio"
-                          name="role"
-                          value="doctor"
-                          checked={formData.role === 'doctor'}
-                          onChange={handleChange}
-                          className="sr-only"
-                        />
-                        <Shield size={18} className="mr-2" />
-                        <span>Doctor</span>
-                      </label>
+                      {['patient', 'doctor'].map((role) => (
+                        <label
+                          key={role}
+                          className={`flex items-center justify-center p-3 border rounded-lg cursor-pointer transition-colors ${formData.proffession === role
+                              ? 'bg-primary/10 border-primary text-primary'
+                              : 'border-base-300 hover:bg-base-200'
+                            }`}
+                        >
+                          <input
+                            type="radio"
+                            name="proffession"
+                            value={role}
+                            checked={formData.proffession === role}
+                            onChange={handleChange}
+                            className="sr-only"
+                          />
+                          {role === 'patient' ? <User size={18} className="mr-2" /> : <Shield size={18} className="mr-2" />}
+                          <span>{role.charAt(0).toUpperCase() + role.slice(1)}</span>
+                        </label>
+                      ))}
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={nextStep}
-                    className="btn btn-primary w-full"
-                  >
-                    Continue
+                  <button type="button" onClick={nextStep} className="btn btn-primary w-full mt-4">
+                    Next
                   </button>
                 </>
               ) : (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-base-content mb-1">Password</label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-base-content/50">
-                        <Lock size={18} className='z-10'/>
-                      </div>
-                      <input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="input input-bordered w-full pl-10"
-                        placeholder="••••••••"
-                        required
-                      />
-                    </div>
-                    <p className="text-xs text-base-content/60 mt-1">Must be at least 8 characters</p>
+                    <label className="block text-sm font-medium mb-1">Mobile Number</label>
+                    <input
+                      type="text"
+                      name="mobilenum"
+                      value={formData.mobilenum}
+                      onChange={handleChange}
+                      className="input input-bordered w-full"
+                      placeholder="9876543210"
+                    />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-base-content mb-1">Confirm Password</label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-base-content/50">
-                        <Lock size={18} className='z-10' />
-                      </div>
-                      <input
-                        type="password"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        className="input input-bordered w-full pl-10"
-                        placeholder="••••••••"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-start">
+                    <label className="block text-sm font-medium mb-1">Password</label>
                     <input
-                      id="terms"
-                      name="agreeTerms"
-                      type="checkbox"
-                      checked={formData.agreeTerms}
+                      type="password"
+                      name="password"
+                      value={formData.password}
                       onChange={handleChange}
-                      className="checkbox checkbox-primary mt-1"
+                      className="input input-bordered w-full"
+                      placeholder="********"
                     />
-                    <div className="ml-3 text-sm">
-                      <label htmlFor="terms" className="text-base-content">
-                        I agree to the{' '}
-                        <Link to="/terms" className="text-primary hover:text-primary-focus">
-                          Terms of Service
-                        </Link>{' '}
-                        and{' '}
-                        <Link to="/privacy" className="text-primary hover:text-primary-focus">
-                          Privacy Policy
-                        </Link>
-                      </label>
-                    </div>
                   </div>
 
-                  <div className="flex space-x-3">
-                    <button
-                      type="button"
-                      onClick={prevStep}
-                      className="btn w-1/3 bg-base-200 text-base-content hover:bg-base-300"
-                    >
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Confirm Password</label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="input input-bordered w-full"
+                      placeholder="********"
+                    />
+                  </div>
+
+                  <div className="form-control">
+                    <label className="label cursor-pointer justify-start gap-2">
+                      <input
+                        type="checkbox"
+                        name="agreeTerms"
+                        checked={formData.agreeTerms}
+                        onChange={handleChange}
+                        className="checkbox checkbox-primary"
+                      />
+                      <span className="label-text">
+                        I agree to the <Link to="#" className="link link-primary">Terms</Link> and <Link to="#" className="link link-primary">Privacy Policy</Link>
+                      </span>
+                    </label>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button type="button" onClick={prevStep} className="btn btn-outline w-1/2">
                       Back
                     </button>
-                    <button
-                      type="submit"
-                      disabled={isLoading}
-                      className={`btn btn-primary w-2/3 flex items-center justify-center ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
-                    >
-                      {isLoading ? (
-                        <span className="loading loading-spinner"></span>
-                      ) : (
-                        <>
-                          <CheckCircle size={18} className="mr-2" />
-                          <span>Create Account</span>
-                        </>
-                      )}
+                    <button type="submit" disabled={isregistering} className="btn btn-primary w-1/2">
+                      {isregistering ? 'Creating...' : 'Create Account'}
                     </button>
                   </div>
                 </>
               )}
             </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-base-content">
-                Already have an account?{' '}
-                <Link to="/login" className="text-primary hover:text-primary-focus font-medium">
-                  Sign in
-                </Link>
-              </p>
-            </div>
+            <p className="text-sm text-center mt-4">
+              Already have an account? <Link to="/login" className="link link-primary">Sign in</Link>
+            </p>
           </div>
         </div>
       </div>

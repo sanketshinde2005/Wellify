@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Activity, Users, Clock, Shield, ChevronRight, Award } from 'lucide-react';
 
-const AboutPage = () => {
+const WelcomePage = () => {
   return (
     <div className="bg-base-100 min-h-screen">
       {/* Hero Section */}
@@ -37,7 +37,7 @@ const AboutPage = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Decorative shapes */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary opacity-20 rounded-full transform translate-x-1/3 -translate-y-1/3"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary opacity-20 rounded-full transform -translate-x-1/3 translate-y-1/3"></div>
@@ -52,7 +52,7 @@ const AboutPage = () => {
               We're committed to providing exceptional healthcare services with a focus on quality, accessibility, and patient-centered care.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Feature 1 */}
             <div className="card bg-white shadow-md hover:shadow-lg transition-shadow">
@@ -150,4 +150,4 @@ const AboutPage = () => {
   );
 };
 
-export default AboutPage;
+export default WelcomePage;

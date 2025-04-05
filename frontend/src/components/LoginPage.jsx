@@ -1,31 +1,43 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LogIn, User, Lock, UserCircle, Shield } from "lucide-react";
+import { useAuthstore } from "../store/useAuthstore";
+import { toast } from "react-hot-toast";
 
-const LoginPage = ({ onLoginSuccess }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const LoginPage = () => {
+  const { login, isLoggingIn, checkAuth } = useAuthstore();
   const [role, setRole] = useState("patient");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const validateForm = () => {
+    if (!formData.email.trim()) return toast.error("Email is required!");
+    if (!/\S+@\S+\.\S+/.test(formData.email)) return toast.error("Invalid email format!");
+    if (!formData.password.trim()) return toast.error("Password is required!");
+    if (formData.password.length < 6) {
+      return toast.error("Password must be at least 6 characters!");
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    // Simulate API call
-    setTimeout(() => {
-      if (!email || !password) {
-        setError("Please enter both email and password");
-        setIsLoading(false);
-        return;
-      }
-
-      console.log("Login attempt:", { email, password, role });
-      onLoginSuccess();
-      setIsLoading(false);
-    }, 1000);
+    if (validateForm() === true) {
+      await login(formData);
+      navigate("/");
+    }
   };
 
   return (
@@ -46,12 +58,6 @@ const LoginPage = ({ onLoginSuccess }) => {
 
           {/* Form Section */}
           <div className="p-8 space-y-6">
-            {error && (
-              <div className="alert alert-error shadow-sm">
-                <span>{error}</span>
-              </div>
-            )}
-
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Input */}
               <div>
@@ -62,8 +68,9 @@ const LoginPage = ({ onLoginSuccess }) => {
                   <User className="absolute left-3 top-3.5 h-5 w-5 text-base-content/60 z-10" />
                   <input
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     className="input input-bordered w-full pl-10"
                     placeholder="you@example.com"
                     required
@@ -80,8 +87,9 @@ const LoginPage = ({ onLoginSuccess }) => {
                   <Lock className="absolute left-3 top-3.5 h-5 w-5 text-base-content/60 z-10" />
                   <input
                     type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
                     className="input input-bordered w-full pl-10"
                     placeholder="••••••••"
                     required
@@ -102,11 +110,10 @@ const LoginPage = ({ onLoginSuccess }) => {
                 <p className="text-sm font-medium text-base-content mb-2">I am a:</p>
                 <div className="grid grid-cols-2 gap-4">
                   <label
-                    className={`flex items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
-                      role === "patient"
-                        ? "bg-primary/10 border-primary text-primary"
-                        : "border-base-300 hover:bg-base-200"
-                    }`}
+                    className={`flex items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${role === "patient"
+                      ? "bg-primary/10 border-primary text-primary"
+                      : "border-base-300 hover:bg-base-200"
+                      }`}
                   >
                     <input
                       type="radio"
@@ -120,11 +127,10 @@ const LoginPage = ({ onLoginSuccess }) => {
                     <span>Patient</span>
                   </label>
                   <label
-                    className={`flex items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
-                      role === "doctor"
-                        ? "bg-primary/10 border-primary text-primary"
-                        : "border-base-300 hover:bg-base-200"
-                    }`}
+                    className={`flex items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${role === "doctor"
+                      ? "bg-primary/10 border-primary text-primary"
+                      : "border-base-300 hover:bg-base-200"
+                      }`}
                   >
                     <input
                       type="radio"
@@ -143,12 +149,10 @@ const LoginPage = ({ onLoginSuccess }) => {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isLoading}
-                className={`btn btn-primary w-full ${
-                  isLoading ? "loading" : ""
-                }`}
+                disabled={isLoggingIn}
+                className={`btn btn-primary w-full ${isLoggingIn ? "loading" : ""}`}
               >
-                {isLoading ? "Signing In..." : "Sign In"}
+                {isLoggingIn ? "Signing In..." : "Sign In"}
               </button>
             </form>
 

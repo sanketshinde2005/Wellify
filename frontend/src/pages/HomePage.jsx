@@ -7,13 +7,13 @@ export default function HomePage() {
 
         {/* Left Content */}
         <div className="md:w-1/2 space-y-6">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-primary-content leading-tight">
+          <h1 className="text-4xl text-accent md:text-5xl font-extrabold  leading-tight">
             Welcome to <span className="text-primary">ZeeCare Medical Institute</span>
           </h1>
-          <h2 className="text-2xl font-semibold text-secondary-content">
+          <h2 className="text-2xl font-semibold text-secondary">
             Your Trusted Healthcare Provider
           </h2>
-          <p className="text-lg leading-relaxed text-neutral-content">
+          <p className="text-lg leading-relaxed text-neutral">
             ZeeCare is a state-of-the-art medical facility offering compassionate, expert care.
             Our professionals deliver personalized treatment tailored to your needs — ensuring
             a smooth and healthy journey toward wellness.
