@@ -1,16 +1,15 @@
 import bcrypt from "bcryptjs"
-import cloudinary from "../config/cloudinary.js"
+// import cloudinary from "../config/cloudinary.js"
 import { generateToken } from "../lib/utils.js";
 import User from "../models/UserModel.js"
-import Doctor from "../models/Doctor.js"
 
 export const signup = async (req, res) => {
     // res.send("signup route");
 
-    const { fullName, email, password, mobilenum } = req.body
+    const { fullName, email, password, mobilenum, proffession } = req.body
 
     try {
-        if (!fullName || !email || !password || !mobilenum) {
+        if (!fullName || !email || !password || !mobilenum || !proffession) {
             return res.status(400).json({
                 message: "All Fields are Required"
             })
@@ -31,6 +30,7 @@ export const signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const newUser = new User({
+            proffession,
             mobilenum,
             fullName,
             email,
@@ -44,6 +44,7 @@ export const signup = async (req, res) => {
 
             res.status(201).json({
                 _id: newUser._id,
+                proffession: newUser.proffession,
                 fullName: newUser.fullName,
                 email: newUser.email,
                 mobilenum: newUser.mobilenum,
@@ -154,12 +155,11 @@ export const checkAuth = (req, res) => {
     }
 };
 
-export const deleteSrJruser = async (req, res) => {
+export const deleteUser = async (req, res) => {
     try {
-        // const { email } = req.body
+        const userId = req.User._id;
 
-        const userId = req.User.id;
-        const deletedUser = await User.findByIdAndDelete(userId)
+        const deletedUser = await User.findByIdAndDelete(userId);
 
         if (!deletedUser) {
             return res.status(404).json({ message: "User not found" });
@@ -171,4 +171,6 @@ export const deleteSrJruser = async (req, res) => {
         console.error("Error in deleting user:", error.message);
         res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
+
+

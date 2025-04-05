@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
     {
+        proffession: {
+            type: String,
+            required: true,
+            default: "",
+        },
         mobilenum: {
             type: String,
             required: true,
@@ -24,6 +29,21 @@ const userSchema = new mongoose.Schema(
         profilePic: {
             type: String,
             default: "",
+        },
+        Medicaldetails: {
+            height: {
+                type: Number,
+                default: 0,
+            },
+            weight: {
+                type: Number,
+                default: 0,
+            },
+            bloodGroup: {
+                type: String,
+                default: "",
+            },
+
         }
     },
     { timestamps: true }
