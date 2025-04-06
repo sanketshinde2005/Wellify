@@ -1,12 +1,13 @@
-import express from "express";
-import { getAllDoctors } from "../controllers/allUsersController.js";
-import { protectroute } from "../middleware/auth.middleware.js";
+import express from 'express';
 
-const appoitmentRoute = express.Router();
+import { addAppointment, getPatientAppointments, getDoctorAppointments } from '../controllers/apointmentController.js';
+import { protectroute } from '../middleware/auth.middleware.js';
 
-// signup route
-appoitmentRoute.post("/alldoctors", protectroute, getAllDoctors);
+const appointmentRoute = express.Router();
 
-// appoitmentRoute.post("/", protectroute, getAllDoctors);
+appointmentRoute.use(protectroute);
+appointmentRoute.post('/add', addAppointment);
+appointmentRoute.get('/patientappointments', getPatientAppointments);
+appointmentRoute.get('/doctorsappointments', getDoctorAppointments);
 
-export default appoitmentRoute;
+export default appointmentRoute;

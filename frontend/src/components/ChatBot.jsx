@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
-import { FaUserMd, FaUser, FaHeartbeat, FaComments, FaTimes } from 'react-icons/fa';
+import {
+  MessageSquare,
+  X,
+  Stethoscope,
+  User,
+  HeartPulse,
+} from 'lucide-react';
 
-function ChatBot({ apiBaseUrl = 'http://localhost:5000' }) {
-  const sessionIdRef = useRef(uuidv4());
+export default function Chatbot() {
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
   const [messages, setMessages] = useState([]);
@@ -13,25 +17,10 @@ function ChatBot({ apiBaseUrl = 'http://localhost:5000' }) {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const res = await axios.get(`${apiBaseUrl}/api/chat/history/${sessionIdRef.current}`);
-        if (res.data?.history) {
-          setMessages(res.data.history);
-        }
-      } catch (err) {
-        console.error('Failed to load chat history', err);
-      }
-    };
-    fetchHistory();
-  }, [apiBaseUrl]);
-
-  useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
   useEffect(() => {
-    // Focus the input field when chat is opened
     if (isChatOpen && inputRef.current) {
       inputRef.current.focus();
     }
@@ -46,13 +35,15 @@ function ChatBot({ apiBaseUrl = 'http://localhost:5000' }) {
     setLoading(true);
 
     try {
-      const res = await axios.post(`${apiBaseUrl}/api/chat`, {
+      const res = await axios.post('http://localhost:5005/api/chat', {
         message: input,
-        sessionId: sessionIdRef.current,
       });
 
       if (res.data.reply) {
-        setMessages([...newMessages, { role: 'assistant', content: res.data.reply }]);
+        setMessages([
+          ...newMessages,
+          { role: 'assistant', content: res.data.reply },
+        ]);
       }
     } catch (err) {
       console.error('Failed to send message', err);
@@ -65,78 +56,84 @@ function ChatBot({ apiBaseUrl = 'http://localhost:5000' }) {
     setIsChatOpen(!isChatOpen);
   };
 
+  const clearChat = () => {
+    setMessages([]);
+  };
+
   return (
     <>
-      {/* FAB Button */}
-      <button 
+      {/* Toggle Button */}
+      <button
         onClick={toggleChat}
-        className={`fixed bottom-8 right-8 w-16 h-16 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 z-50 ${
-          isChatOpen ? "bg-red-500 hover:bg-red-600" : "bg-teal-600 hover:bg-teal-700"
-        }`}
+        className={`btn btn-circle btn-lg fixed bottom-8 right-8 shadow-lg z-50 transition-all duration-300 ${isChatOpen ? 'bg-error text-white' : 'bg-primary text-white'
+          }`}
       >
-        {isChatOpen 
-          ? <FaTimes className="text-white text-xl" /> 
-          : <FaComments className="text-white text-xl" />}
-        <span className={`absolute -top-2 -right-2 bg-teal-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center transition-opacity ${messages.length > 0 && !isChatOpen ? 'opacity-100' : 'opacity-0'}`}>
-          {messages.filter(m => m.role === 'assistant').length}
-        </span>
+        {isChatOpen ? <X className="w-5 h-5" /> : <MessageSquare className="w-5 h-5" />}
+        {messages.length > 0 && !isChatOpen && (
+          <div className="badge badge-secondary absolute -top-1 -right-1 text-xs">
+            {messages.filter((m) => m.role === 'assistant').length}
+          </div>
+        )}
       </button>
 
       {/* Chat Panel */}
-      <div 
-        className={`fixed bottom-24 right-8 w-full max-w-xs sm:max-w-sm bg-white shadow-2xl rounded-2xl border-2 border-teal-300 transition-all duration-300 z-40 ${
-          isChatOpen ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0 pointer-events-none"
-        }`}
+      <div
+        className={`fixed bottom-24 right-8 w-full max-w-xs sm:max-w-sm bg-base-100 shadow-xl rounded-box border border-primary transition-all duration-300 z-40 ${isChatOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'
+          }`}
         style={{ maxHeight: '80vh' }}
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-teal-100 rounded-t-2xl border-b-2 border-teal-300 p-3">
-          <div className="flex items-center justify-center gap-2">
-            <FaHeartbeat className="text-2xl text-teal-700 animate-pulse" />
-            <h1 className="text-xl font-bold text-teal-800">Wellify Medical Assistant</h1>
+        <div className="bg-primary text-primary-content rounded-t-box p-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 flex-1 justify-center">
+            <HeartPulse className="w-5 h-5 animate-pulse" />
+            <h1 className="font-bold text-lg">Wellify Assistant</h1>
           </div>
+          {messages.length > 0 && (
+            <button onClick={clearChat} className="btn btn-xs btn-outline border-white text-white hover:bg-white hover:text-primary">
+              Clear
+            </button>
+          )}
         </div>
-        
+
+        {/* Messages */}
         <div className="p-3">
-          <div className="h-96 overflow-y-auto rounded-lg p-3 bg-white border border-gray-200 shadow-inner space-y-3 mb-3">
+          <div className="h-96 overflow-y-auto rounded-box p-3 bg-base-100 border border-base-300 space-y-3 mb-3" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(156, 163, 175, 0.2) rgba(255, 255, 255, 0.5)' }}>
             {messages.length === 0 && (
-              <div className="text-center text-gray-500 py-6">
-                <p className="text-base font-medium mb-2">How can I help with your health today?</p>
-                <p className="text-xs text-gray-400">Describe your symptoms or ask a question below</p>
+              <div className="text-center text-base-content/70 py-6 space-y-1">
+                <p className="font-medium">How can I help with your health today?</p>
+                <p className="text-xs">Describe your symptoms or ask a question below</p>
               </div>
             )}
 
             {messages.map((msg, i) => (
               <div
                 key={i}
-                className={`flex items-start gap-2 ${
-                  msg.role === 'user' ? 'justify-end' : 'justify-start'
-                }`}
+                className={`flex items-start gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'
+                  }`}
               >
                 {msg.role === 'assistant' && (
-                  <div className="text-teal-600 text-lg mt-1"><FaUserMd /></div>
+                  <Stethoscope className="w-5 h-5 text-primary mt-1" />
                 )}
 
                 <div
-                  className={`px-3 py-2 rounded-2xl max-w-[80%] text-sm whitespace-pre-wrap shadow-sm ${
-                    msg.role === 'user'
-                      ? 'bg-teal-600 text-white rounded-br-none'
-                      : 'bg-teal-100 text-gray-800 rounded-bl-none'
-                  }`}
+                  className={`px-3 py-2 rounded-box text-sm whitespace-pre-wrap max-w-[80%] shadow ${msg.role === 'user'
+                      ? 'bg-primary text-white rounded-br-none'
+                      : 'bg-primary/10 text-base-content rounded-bl-none'
+                    }`}
                 >
                   {msg.content}
                 </div>
 
                 {msg.role === 'user' && (
-                  <div className="text-gray-600 text-lg mt-1"><FaUser /></div>
+                  <User className="w-5 h-5 text-base-content mt-1" />
                 )}
               </div>
             ))}
 
             {loading && (
-              <div className="flex items-start gap-2 animate-pulse text-xs text-gray-500">
-                <FaUserMd className="text-teal-600 mt-1" />
-                <div className="bg-teal-100 px-3 py-2 rounded-xl shadow-sm">
+              <div className="flex items-start gap-2 animate-pulse text-xs text-base-content/70">
+                <Stethoscope className="text-primary mt-1 w-5 h-5" />
+                <div className="bg-primary/10 px-3 py-2 rounded-box shadow-sm">
                   Assistant is typing
                   <span className="ml-1 animate-bounce inline-block">.</span>
                   <span className="ml-0.5 animate-bounce delay-75 inline-block">.</span>
@@ -148,8 +145,10 @@ function ChatBot({ apiBaseUrl = 'http://localhost:5000' }) {
           </div>
 
           {/* Input Area */}
-          <div className="flex flex-col border-t-2 border-teal-200 pt-3">
-            <div className="text-xs font-medium text-teal-700 mb-1 px-1">Your message:</div>
+          <div className="flex flex-col border-t border-base-300 pt-3">
+            <label className="text-xs font-medium text-base-content mb-1 px-1">
+              Your message:
+            </label>
             <div className="flex items-center gap-2">
               <textarea
                 ref={inputRef}
@@ -162,22 +161,19 @@ function ChatBot({ apiBaseUrl = 'http://localhost:5000' }) {
                   }
                 }}
                 rows={2}
-                className="flex-1 resize-none border-2 border-teal-400 bg-white px-3 py-2 rounded-xl shadow-inner text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition max-h-28 overflow-auto text-gray-800 font-medium placeholder:text-gray-400 placeholder:font-normal placeholder:text-opacity-70"
-                placeholder="Share your symptoms or ask a medical question..."
+                placeholder="Type your health question here..."
+                className="textarea textarea-bordered textarea-md w-full resize-none max-h-28"
               />
               <button
                 onClick={sendMessage}
                 disabled={!input.trim()}
-                className={`px-4 py-2 rounded-xl font-semibold shadow-md text-sm transition ${
-                  input.trim() 
-                    ? "bg-teal-600 hover:bg-teal-700 text-white" 
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                }`}
+                className={`btn btn-primary btn-md transition ${input.trim() ? '' : 'btn-disabled'
+                  }`}
               >
                 Send
               </button>
             </div>
-            <div className="text-xs text-center text-gray-500 mt-2">
+            <div className="text-xs text-center text-base-content/60 mt-2">
               Press Enter to send
             </div>
           </div>
@@ -186,5 +182,3 @@ function ChatBot({ apiBaseUrl = 'http://localhost:5000' }) {
     </>
   );
 }
-
-export default ChatBot;

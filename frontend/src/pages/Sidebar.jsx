@@ -335,6 +335,7 @@ const Sidebar = ({ onToggle }) => {
                 label="Find Doctor"
               />
               <NavItem to="/contactus" icon={Phone} label="Contact Us" />
+              <NavItem to="/wellnesstips" icon={Phone} label="Wellness Tips" />
             </NavSection>
             <NavSection title="Account" icon={User} index={7}>
               <NavItem to="/settings" icon={Settings} label="Settings" />

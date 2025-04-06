@@ -200,13 +200,6 @@ export function UpcomingAppointments() {
           </div>
         ))}
       </div>
-
-      {/* Footer Actions */}
-      <div className="mt-8 flex justify-center">
-        <button className="btn btn-primary">
-          Schedule New Appointment
-        </button>
-      </div>
     </div>
   );
 }

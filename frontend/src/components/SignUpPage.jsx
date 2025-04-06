@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, User, Lock, Mail, Shield } from 'lucide-react';
 import { useAuthstore } from '../store/useAuthstore';
+import toast from 'react-hot-toast';
 // import { useAuthstore } from '../store/useAuthStore.js'; // Adjust path as needed
 
 const SignUpPage = () => {
@@ -31,11 +32,11 @@ const SignUpPage = () => {
 
   const validateStep1 = () => {
     if (!formData.fullName || !formData.email) {
-      setError('Please fill in all required fields');
+      toast.error('Please fill in all required fields');
       return false;
     }
     if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      setError('Invalid email address');
+      ('Invalid email address');
       return false;
     }
     return true;
@@ -43,15 +44,15 @@ const SignUpPage = () => {
 
   const validateStep2 = () => {
     if (!formData.password || !formData.confirmPassword || !formData.mobilenum) {
-      setError('Please fill in all fields');
+      toast.error('Please fill in all fields');
       return false;
     }
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      toast.error('Password must be at least 6 characters long');
       return false;
     }
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      toast.error('Passwords do not match');
       return false;
     }
     return true;
@@ -73,7 +74,7 @@ const SignUpPage = () => {
 
     if (!validateStep2()) return;
     if (!formData.agreeTerms) {
-      setError('You must agree to the Terms and Privacy Policy');
+      toast.error('You must agree to the Terms and Privacy Policy');
       return;
     }
 
