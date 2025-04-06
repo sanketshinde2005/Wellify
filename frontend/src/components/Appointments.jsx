@@ -1,18 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, Clock, User, ChevronRight, Clipboard, Shield, MapPin, Plus, Trash2, Check, X, AlertCircle } from "lucide-react";
+import useDoctorsStore from '../store/useDoctorsStore';
 
 const Appointments = () => {
+  const { doctors, fetchAllDoctors } = useDoctorsStore();
+
+  useEffect(() => {
+    fetchAllDoctors();
+  }, []);
+
+  const AllDocs = useMemo(() => {
+    return doctors?.map(doctor => ({
+      id: doctor._id,
+      fullName: doctor.fullName,
+      specialization: doctor.specialdegree || "General Practice",
+      mobileNo: doctor.mobilenum,
+      profilePicture: doctor.profilePic || "https://randomuser.me/api/portraits/men/10.jpg",
+      education: doctor.qualification || `${doctor.specialdegree !== "none" ? doctor.specialdegree : "MBBS"}`,
+      description: doctor.about || "Medical professional",
+      rating: (Math.random() * (5 - 4) + 4).toFixed(1), // Generate a random rating between 4.0-5.0
+      experience: doctor.experience || 0,
+      PlatformLinks: {
+        instagram: "#",
+        linkedin: "#",
+      },
+    })) || [];
+  }, [doctors]);
   const [appointments, setAppointments] = useState([
-    { id: 1, title: "Annual Checkup", date: "2025-04-10", time: "10:00", doctor: "Dr. Smith", status: "Confirmed", type: "in-person", notes: "Regular checkup", preparation: "No food 8 hours before" },
-    { id: 2, title: "Dental Cleaning", date: "2025-04-15", time: "14:30", doctor: "Dr. Johnson", status: "Pending", type: "in-person", notes: "Routine cleaning", preparation: "Brush before appointment" },
-    { id: 3, title: "Eye Examination", date: "2025-04-20", time: "09:15", doctor: "Dr. Williams", status: "Confirmed", type: "video", notes: "Annual vision test", preparation: "Have insurance card ready" }
+    { id: 1, subject: "Annual Checkup", date: "2025-04-10", time: "10:00", doctor: "Dr. Smith", status: "Confirmed", type: "in-person", notes: "Regular checkup", preparation: "No food 8 hours before" },
+    { id: 2, subject: "Dental Cleaning", date: "2025-04-15", time: "14:30", doctor: "Dr. Johnson", status: "Pending", type: "in-person", notes: "Routine cleaning", preparation: "Brush before appointment" },
+    { id: 3, subject: "Eye Examination", date: "2025-04-20", time: "09:15", doctor: "Dr. Williams", status: "Confirmed", type: "video", notes: "Annual vision test", preparation: "Have insurance card ready" }
   ]);
 
   const [expandedAppointment, setExpandedAppointment] = useState(null);
   const [activeTab, setActiveTab] = useState('appointments'); // 'appointments' or 'add'
 
   const [newAppointment, setNewAppointment] = useState({
-    title: "",
+    subject: "",
     date: "",
     time: "",
     doctor: "",
@@ -44,8 +68,8 @@ const Appointments = () => {
 
   const validateStep = (step) => {
     if (step === 1) {
-      if (!newAppointment.title) {
-        setFormError("Please enter appointment title");
+      if (!newAppointment.subject) {
+        setFormError("Please enter appointment subject");
         return false;
       }
       if (!newAppointment.doctor) {
@@ -91,7 +115,7 @@ const Appointments = () => {
     ]);
 
     setNewAppointment({
-      title: "",
+      subject: "",
       date: "",
       time: "",
       doctor: "",
@@ -239,7 +263,7 @@ const Appointments = () => {
                           {/* Appointment Details */}
                           <div className="flex flex-1 flex-col gap-2 md:w-2/3">
                             <div className="text-indigo-600 font-medium mb-1">
-                              {appointment.title}
+                              {appointment.subject}
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                               <div className="inline-flex items-center gap-2">
@@ -359,11 +383,11 @@ const Appointments = () => {
                 <div className="space-y-6">
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Appointment Title</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Appointment Subject</label>
                       <input
                         type="text"
-                        name="title"
-                        value={newAppointment.title}
+                        name="subject"
+                        value={newAppointment.subject}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
                         placeholder="e.g. Annual Checkup, Dental Cleaning"
@@ -371,14 +395,22 @@ const Appointments = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Doctor</label>
-                      <input
-                        type="text"
+                      <select
                         name="doctor"
                         value={newAppointment.doctor}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
-                        placeholder="e.g. Dr. Smith"
-                      />
+                      >
+                        <option value="" disabled>
+                          Select a doctor
+                        </option>
+                        {AllDocs.map((doc) => (
+                          <option key={doc._id} value={doc._id}>
+                            {doc.fullName}
+                          </option>
+                        ))}
+                      </select>
+
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Appointment Type</label>
@@ -581,7 +613,7 @@ const Appointments = () => {
                         key={appointment.id}
                         className="border-l-4 border-indigo-500 pl-3 py-2"
                       >
-                        <div className="text-sm font-medium text-gray-800">{appointment.title}</div>
+                        <div className="text-sm font-medium text-gray-800">{appointment.subject}</div>
                         <div className="text-xs text-gray-500 flex items-center gap-1">
                           <CalendarDays className="h-3 w-3" />
                           {formatDate(appointment.date)}

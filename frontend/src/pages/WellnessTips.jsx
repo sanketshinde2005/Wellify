@@ -92,7 +92,7 @@ export default function WellnessTips() {
     : wellnessTips.filter(tip => tip.category === activeCategory);
 
   const getCategoryEmoji = (category) => {
-    switch (category) {
+    switch(category) {
       case 'all': return '✨';
       case 'nutrition': return '🍎';
       case 'exercise': return '🏃';
@@ -116,9 +116,9 @@ export default function WellnessTips() {
             key={cat}
             onClick={() => setActiveCategory(cat)}
             className={`px-6 py-3 rounded-full transition-all duration-300 flex items-center gap-2 shadow-sm hover:shadow 
-            ${activeCategory === cat
-                ? 'bg-blue-500 text-white transform scale-105'
-                : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+            ${activeCategory === cat 
+              ? 'bg-blue-500 text-white transform scale-105' 
+              : 'bg-white text-gray-700 hover:bg-gray-100'}`}
           >
             <span>{getCategoryEmoji(cat)}</span>
             <span>{cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
@@ -129,8 +129,8 @@ export default function WellnessTips() {
       {/* Tips List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {filteredTips.map(tip => (
-          <div
-            key={tip.id}
+          <div 
+            key={tip.id} 
             className={`rounded-lg overflow-hidden shadow-md transition-all duration-300 
             ${tip.color} ${tip.borderColor} border hover:shadow-lg
             ${animate ? 'transform scale-95 opacity-0' : 'transform scale-100 opacity-100'}`}
@@ -143,13 +143,13 @@ export default function WellnessTips() {
           </div>
         ))}
       </div>
-
+      
       {filteredTips.length === 0 && (
         <div className="text-center p-10">
           <p className="text-gray-500 text-lg">No tips available for this category.</p>
         </div>
       )}
-
+      
       <div className="text-center mt-12 text-gray-500 text-sm">
         <p>Choose a category to filter tips or view all for complete wellness.</p>
       </div>

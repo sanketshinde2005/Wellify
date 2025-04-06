@@ -12,7 +12,7 @@ const useAppointmentStore = create((set) => ({
   fetchPatientAppointments: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axiosInstance.get("/appointments/patient");
+      const response = await axiosInstance.get("/appointments/patientappointments");
       set({ patientAppointments: response.data, loading: false });
     } catch (err) {
       console.error("Fetch Patient Appointments Error:", err);
@@ -25,7 +25,7 @@ const useAppointmentStore = create((set) => ({
   fetchDoctorAppointments: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axiosInstance.get("/appointments/doctor");
+      const response = await axiosInstance.get("/appointments/doctorsappointments");
       set({ doctorAppointments: response.data, loading: false });
     } catch (err) {
       console.error("Fetch Doctor Appointments Error:", err);
@@ -38,7 +38,7 @@ const useAppointmentStore = create((set) => ({
   addAppointment: async (appointmentData, isDoctor = false) => {
     set({ loading: true, error: null });
     try {
-      const response = await axiosInstance.post("/appointments", appointmentData);
+      const response = await axiosInstance.post("/appointments/add", appointmentData);
       const newAppointment = response.data.appointment;
 
       set((state) => ({
@@ -50,6 +50,7 @@ const useAppointmentStore = create((set) => ({
           : state.patientAppointments,
         loading: false,
       }));
+      
 
       toast.success("Appointment booked successfully");
     } catch (err) {
