@@ -1,10 +1,14 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 import fitz  # PyMuPDF
 import re
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+# Fix #1: Configure CORS properly with the specific origin
+CORS(app, origins=["http://localhost:5173"], supports_credentials=True)
+
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
@@ -44,11 +48,15 @@ def generate_summary(info):
     )
 
 # --------- Routes ---------
-@app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['POST', 'OPTIONS'])
 def upload_pdf():
+    # Fix #2: Handle preflight OPTIONS requests
+    if request.method == 'OPTIONS':
+        return '', 200
+        
     if 'file' not in request.files:
         return jsonify({'error': 'No file uploaded'}), 400
-
+    
     file = request.files['file']
     if not file.filename.endswith('.pdf'):
         return jsonify({'error': 'Only PDF files allowed'}), 400
@@ -71,8 +79,11 @@ def upload_pdf():
         'generated_summary': summary
     })
 
-@app.route('/')
+@app.route('/', methods=['GET', 'OPTIONS'])
 def home():
+    # Fix #3: Handle preflight OPTIONS requests
+    if request.method == 'OPTIONS':
+        return '', 200
     return jsonify({"message": "Welcome to the Medical Report Analyzer API!"})
 
 if __name__ == '__main__':
