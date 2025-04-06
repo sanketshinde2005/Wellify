@@ -1,80 +1,82 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { CalendarDays, Clock, User, ChevronRight, Clipboard, Shield, Plus, Trash2, Check, X, AlertCircle } from "lucide-react";
+import { CalendarDays, Clock, User, ChevronRight, Clipboard, Shield, MapPin, Plus, Trash2, Check, X, AlertCircle } from "lucide-react";
 import useDoctorsStore from '../store/useDoctorsStore';
 import useAppointmentStore from '../store/useAppointmentStore';
 import toast from 'react-hot-toast';
 
 const Appointments = () => {
   const { doctors, fetchAllDoctors } = useDoctorsStore();
-  const { 
-    patientAppointments, 
-    fetchPatientAppointments, 
-    addAppointment, 
-    deleteAppointment,
-    updateAppointment 
-  } = useAppointmentStore();
+  const { addAppointment, fetchDoctorAppointments, fetchPatientAppointments } = useAppointmentStore();
+
+  useEffect(() => {
+    fetchAllDoctors();
+  }, []);
+
+  const AllDocs = useMemo(() => {
+    return doctors?.map(doctor => ({
+      id: doctor._id,
+      fullName: doctor.fullName,
+      specialization: doctor.specialdegree || "General Practice",
+      mobileNo: doctor.mobilenum,
+      profilePicture: doctor.profilePic || "https://randomuser.me/api/portraits/men/10.jpg",
+      education: doctor.qualification || `${doctor.specialdegree !== "none" ? doctor.specialdegree : "MBBS"}`,
+      description: doctor.about || "Medical professional",
+      rating: (Math.random() * (5 - 4) + 4).toFixed(1), // Generate a random rating between 4.0-5.0
+      experience: doctor.experience || 0,
+      PlatformLinks: {
+        instagram: "#",
+        linkedin: "#",
+      },
+    })) || [];
+  }, [doctors]);
+  const [appointments, setAppointments] = useState([
+    { id: 1, subject: "Annual Checkup", date: "2025-04-10", time: "10:00", doctor: "Dr. Smith", status: "Confirmed", type: "in-person", reasons: "Regular checkup", preparation: "No food 8 hours before" },
+    { id: 2, subject: "Dental Cleaning", date: "2025-04-15", time: "14:30", doctor: "Dr. Johnson", status: "Pending", type: "in-person", reasons: "Routine cleaning", preparation: "Brush before appointment" },
+    { id: 3, subject: "Eye Examination", date: "2025-04-20", time: "09:15", doctor: "Dr. Williams", status: "Confirmed", type: "video", reasons: "Annual vision test", preparation: "Have insurance card ready" }
+  ]);
 
   const [expandedAppointment, setExpandedAppointment] = useState(null);
-  const [activeTab, setActiveTab] = useState('appointments');
-  const [formStep, setFormStep] = useState(1);
-  const [formError, setFormError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('appointments'); // 'appointments' or 'add'
 
   const [newAppointment, setNewAppointment] = useState({
     subject: "",
     date: "",
     time: "",
-    doctorId: "",
+    doctorid: "",
     status: "Pending",
     type: "in-person",
-    reason: "",
+    reasons: "",
+    preparation: ""
   });
 
-  // Fetch data on component mount
-  useEffect(() => {
-    fetchAllDoctors();
-    fetchPatientAppointments();
-  }, []);
+  const [formStep, setFormStep] = useState(1);
+  const [formError, setFormError] = useState("");
 
-  // Format doctors data for dropdown
-  const formattedDoctors = useMemo(() => {
-    return doctors?.map(doctor => ({
-      id: doctor._id,
-      fullName: doctor.fullName,
-      specialization: doctor.specialdegree || "General Practice",
-    })) || [];
-  }, [doctors]);
-
-  // Find doctor name by ID
-  const getDoctorName = (doctorId) => {
-    const doctor = formattedDoctors.find(doc => doc.id === doctorId);
-    return doctor ? doctor.fullName : "Unknown Doctor";
-  };
-
-  // Toggle appointment details
   const toggleAppointmentDetails = (id) => {
-    setExpandedAppointment(expandedAppointment === id ? null : id);
+    if (expandedAppointment === id) {
+      setExpandedAppointment(null);
+    } else {
+      setExpandedAppointment(id);
+    }
   };
 
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewAppointment(prev => ({
-      ...prev,
+    setNewAppointment({
+      ...newAppointment,
       [name]: value
-    }));
+    });
     setFormError("");
   };
 
-  // Form validation
   const validateStep = (step) => {
     if (step === 1) {
       if (!newAppointment.subject) {
         setFormError("Please enter appointment subject");
         return false;
       }
-      if (!newAppointment.doctorId) {
-        setFormError("Please select a doctor");
+      if (!newAppointment.doctorid) {
+        setFormError("Please enter doctor name");
         return false;
       }
     } else if (step === 2) {
@@ -90,7 +92,6 @@ const Appointments = () => {
     return true;
   };
 
-  // Form navigation
   const nextStep = () => {
     if (validateStep(formStep)) {
       setFormStep(formStep + 1);
@@ -102,75 +103,49 @@ const Appointments = () => {
     setFormStep(formStep - 1);
     setFormError("");
   };
-
-  // Handle appointment submission
   const handleAddAppointment = async () => {
-    if (!validateStep(formStep)) return;
-    
-    setLoading(true);
-    try {
-      await addAppointment({
-        doctorId: newAppointment.doctorId,
-        subject: newAppointment.subject,
-        reason: newAppointment.reason,
-        time: newAppointment.time,
-        date: newAppointment.date,
-      });
-
-      toast.success("Appointment booked successfully");
-      
-      // Reset form
-      setNewAppointment({
-        subject: "",
-        date: "",
-        time: "",
-        doctorId: "",
-        status: "Pending",
-        type: "in-person",
-        reason: "",
-      });
-      
-      setFormStep(1);
-      setActiveTab('appointments');
-      fetchPatientAppointments(); // Refresh appointments list
-    } catch (error) {
-      toast.error("Failed to book appointment");
-    } finally {
-      setLoading(false);
+    if (!validateStep(formStep)) {
+      return;
     }
+
+    await addAppointment({
+      doctorId: newAppointment.doctorid,  // Change to doctorId
+      subject: newAppointment.subject,
+      reason: newAppointment.reasons,     // Change to reason
+      time: newAppointment.time,
+      date: newAppointment.date,
+    });
+
+    // Reset form
+    setNewAppointment({
+      subject: "",
+      date: "",
+      time: "",
+      doctorid: "",
+      status: "Pending",
+      type: "in-person",
+      reasons: "",
+    });
+
+    setFormStep(1);
+    setActiveTab('appointments');
   };
 
-  // Handle appointment deletion
-  const handleDeleteAppointment = async (id) => {
-    if (window.confirm("Are you sure you want to cancel this appointment?")) {
-      try {
-        await deleteAppointment(id);
-        toast.success("Appointment cancelled successfully");
-        fetchPatientAppointments(); // Refresh appointments list
-      } catch (error) {
-        toast.error("Failed to cancel appointment");
-      }
-    }
+  const handleDeleteAppointment = (id) => {
+    setAppointments(appointments.filter(appointment => appointment.id !== id));
   };
 
-  // Handle status change
-  const handleStatusChange = async (id, newStatus) => {
-    try {
-      await updateAppointment(id, { status: newStatus });
-      toast.success("Appointment status updated");
-      fetchPatientAppointments(); // Refresh appointments list
-    } catch (error) {
-      toast.error("Failed to update appointment status");
-    }
+  const handleStatusChange = (id, newStatus) => {
+    setAppointments(appointments.map(appointment =>
+      appointment.id === id ? { ...appointment, status: newStatus } : appointment
+    ));
   };
 
-  // Format date for display
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
-  // Format time for display
   const formatTime = (timeString) => {
     const [hours, minutes] = timeString.split(':');
     const date = new Date();
@@ -228,7 +203,7 @@ const Appointments = () => {
                 </button>
               </div>
 
-              {patientAppointments.length === 0 ? (
+              {appointments.length === 0 ? (
                 <div className="bg-white rounded-xl p-8 text-center">
                   <div className="mb-4 flex justify-center">
                     <CalendarDays className="h-12 w-12 text-gray-300" />
@@ -244,15 +219,15 @@ const Appointments = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {patientAppointments.map((appointment) => (
+                  {appointments.map((appointment) => (
                     <div
-                      key={appointment._id}
+                      key={appointment.id}
                       className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all"
                     >
                       {/* Main appointment card content */}
                       <div
                         className="p-4 cursor-pointer"
-                        onClick={() => toggleAppointmentDetails(appointment._id)}
+                        onClick={() => toggleAppointmentDetails(appointment.id)}
                       >
                         <div className="flex items-center gap-3 mb-3">
                           <div className={`px-3 py-1 text-xs font-medium rounded-full ${appointment.type === "video"
@@ -275,11 +250,11 @@ const Appointments = () => {
                           {/* Doctor Info */}
                           <div className="flex items-center gap-3 md:w-1/3">
                             <div className="w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold text-lg shadow-md border-2 border-white">
-                              {getDoctorName(appointment.doctorId)?.split(' ').map(part => part[0]).join('')}
+                              {/* {appointment.doctorid.split(' ').map(part => part[0]).join('')} */}
                             </div>
                             <div>
                               <p className="font-semibold text-gray-900">
-                                {getDoctorName(appointment.doctorId)}
+                                {appointment.doctorid}
                               </p>
                             </div>
                           </div>
@@ -308,7 +283,7 @@ const Appointments = () => {
                           {/* Expand indicator */}
                           <div className="flex justify-end">
                             <ChevronRight
-                              className={`h-5 w-5 text-gray-400 transform transition-transform ${expandedAppointment === appointment._id ? "rotate-90" : ""
+                              className={`h-5 w-5 text-gray-400 transform transition-transform ${expandedAppointment === appointment.id ? "rotate-90" : ""
                                 }`}
                             />
                           </div>
@@ -316,22 +291,30 @@ const Appointments = () => {
                       </div>
 
                       {/* Expanded details section */}
-                      {expandedAppointment === appointment._id && (
+                      {expandedAppointment === appointment.id && (
                         <div className="px-4 pb-4 pt-2 border-t border-gray-100">
                           <div className="grid md:grid-cols-2 gap-4">
                             <div className="bg-gray-50 rounded-lg p-3">
                               <div className="flex items-center gap-2 mb-2 text-gray-800">
                                 <Clipboard className="h-4 w-4 text-indigo-600" />
-                                <span className="font-medium">Appointment Reason</span>
+                                <span className="font-medium">Appointment Notes</span>
                               </div>
-                              <p className="text-sm text-gray-600">{appointment.reason || "No reason provided"}</p>
+                              <p className="text-sm text-gray-600">{appointment.reasons || "No reasons added"}</p>
+                            </div>
+
+                            <div className="bg-gray-50 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-2 text-gray-800">
+                                <Shield className="h-4 w-4 text-indigo-600" />
+                                <span className="font-medium">Preparation</span>
+                              </div>
+                              <p className="text-sm text-gray-600">{appointment.preparation || "No preparation required"}</p>
                             </div>
                           </div>
 
                           <div className="flex justify-end gap-3 mt-4">
                             <select
                               value={appointment.status}
-                              onChange={(e) => handleStatusChange(appointment._id, e.target.value)}
+                              onChange={(e) => handleStatusChange(appointment.id, e.target.value)}
                               className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
                             >
                               <option value="Pending">Pending</option>
@@ -339,18 +322,11 @@ const Appointments = () => {
                               <option value="Cancelled">Cancelled</option>
                             </select>
                             <button
-                              onClick={() => handleDeleteAppointment(appointment._id)}
+                              onClick={() => handleDeleteAppointment(appointment.id)}
                               className="inline-flex items-center gap-1 px-3 py-1 border border-red-300 text-red-600 rounded-md hover:bg-red-50"
-                              disabled={loading}
                             >
-                              {loading ? (
-                                <span className="loading loading-spinner"></span>
-                              ) : (
-                                <>
-                                  <Trash2 className="h-4 w-4" />
-                                  Cancel
-                                </>
-                              )}
+                              <Trash2 className="h-4 w-4" />
+                              Cancel
                             </button>
                           </div>
                         </div>
@@ -419,18 +395,21 @@ const Appointments = () => {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Doctor</label>
                       <select
-                        name="doctorId"
-                        value={newAppointment.doctorId}
+                        name="doctorid"
+                        value={newAppointment.doctorid}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
                       >
-                        <option value="" disabled>Select a doctor</option>
-                        {formattedDoctors.map((doctor) => (
-                          <option key={doctor.id} value={doctor.id}>
-                            {doctor.fullName} ({doctor.specialization})
+                        <option value="" disabled>
+                          Select a doctor
+                        </option>
+                        {AllDocs.map((doc, ind) => (
+                          <option key={doc.fullName} value={doc.id}>
+                            {doc.fullName}
                           </option>
                         ))}
                       </select>
+
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Appointment Type</label>
@@ -495,21 +474,12 @@ const Appointments = () => {
                         name="date"
                         value={newAppointment.date}
                         onChange={handleInputChange}
-                        min={new Date().toISOString().split('T')[0]}
+                        min={new Date().toISOString().split('T')[0]} // Only future dates
                         className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                      <input
-                        type="time"
-                        name="time"
-                        value={newAppointment.time}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
-                      />
-                    </div>
-                    
+
+
                     {/* Time slots */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Available Time Slots</label>
@@ -550,10 +520,10 @@ const Appointments = () => {
                 <div className="space-y-6">
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Appointment Reason (Optional)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Appointment Notes (Optional)</label>
                       <textarea
-                        name="reason"
-                        value={newAppointment.reason}
+                        name="reasons"
+                        value={newAppointment.reasons}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
                         placeholder="Any specific concerns or symptoms"
@@ -570,7 +540,7 @@ const Appointments = () => {
                         <span className="text-gray-500">Type:</span> {newAppointment.type === 'video' ? 'Telehealth' : 'In-person'}
                       </div>
                       <div>
-                        <span className="text-gray-500">Doctor:</span> {newAppointment.doctorId ? getDoctorName(newAppointment.doctorId) : 'Not specified'}
+                        <span className="text-gray-500">Doctor:</span> {newAppointment.doctorid || 'Not specified'}
                       </div>
                       <div>
                         <span className="text-gray-500">Date:</span> {newAppointment.date ? formatDate(newAppointment.date) : 'Not selected'}
@@ -591,16 +561,9 @@ const Appointments = () => {
                     <button
                       onClick={handleAddAppointment}
                       className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-md transition-all flex items-center gap-2"
-                      disabled={loading}
                     >
-                      {loading ? (
-                        <span className="loading loading-spinner"></span>
-                      ) : (
-                        <>
-                          <Check className="h-4 w-4" />
-                          Book Appointment
-                        </>
-                      )}
+                      <Check className="h-4 w-4" />
+                      Book Appointment
                     </button>
                   </div>
                 </div>
@@ -615,21 +578,21 @@ const Appointments = () => {
             <div className="bg-white rounded-xl shadow-md p-4">
               <h3 className="font-semibold text-gray-800 mb-4">Upcoming</h3>
 
-              {patientAppointments.length === 0 ? (
+              {appointments.length === 0 ? (
                 <div className="text-center text-gray-500 py-4">
                   No upcoming appointments
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {patientAppointments
+                  {appointments
                     .filter(app => app.status !== 'Cancelled')
                     .slice(0, 3)
                     .map((appointment) => (
                       <div
-                        key={appointment._id}
+                        key={appointment.id}
                         className="border-l-4 border-indigo-500 pl-3 py-2"
                       >
-                        <div className="text-sm font-medium text-gray-800">{appointment.subject}</div>
+                        <div className="text-sm font-medium text-gray-800">{appointment.title}</div>
                         <div className="text-xs text-gray-500 flex items-center gap-1">
                           <CalendarDays className="h-3 w-3" />
                           {formatDate(appointment.date)}
@@ -641,7 +604,7 @@ const Appointments = () => {
                       </div>
                     ))}
 
-                  {patientAppointments.filter(app => app.status !== 'Cancelled').length > 3 && (
+                  {appointments.filter(app => app.status !== 'Cancelled').length > 3 && (
                     <div className="text-center pt-2">
                       <button
                         className="text-xs text-indigo-600 hover:text-indigo-800"
