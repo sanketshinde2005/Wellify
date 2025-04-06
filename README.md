@@ -61,7 +61,7 @@ Wellify is a comprehensive healthcare management platform designed to assist pat
 
 ## Features
 
-### 1. **Disease Prediction**
+### 1. Disease Prediction
    - Users can select symptoms to predict potential diseases using a machine learning model.
    - Provides detailed information about the predicted disease, including precautions, medications, diet, and workout recommendations.
 
