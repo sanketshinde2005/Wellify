@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import numpy as np
 import pandas as pd
 import pickle
@@ -6,7 +7,7 @@ import pickle
 
 # flask app
 app = Flask(__name__)
-
+CORS(app)
 
 # load database dataset===================================
 sym_des = pd.read_csv("C:/Users/prath/OneDrive/Desktop/Wellify/backend/datasets/symtoms_df.csv")
@@ -51,9 +52,12 @@ def get_predicted_value(patient_symptoms):
         if item in symptoms_dict:
             input_vector[symptoms_dict[item]] = 1
         else:
-            # Handle the case where a symptom is not in the dictionary
             raise ValueError(f"Symptom '{item}' not recognized")
-    return diseases_list[svc.predict([input_vector])[0]]
+
+    input_df = pd.DataFrame([input_vector], columns=list(symptoms_dict.keys()))
+    prediction = svc.predict(input_df)[0]
+    return diseases_list[prediction]
+
 
 
 # API Routes ========================================

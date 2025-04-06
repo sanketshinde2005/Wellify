@@ -17,11 +17,11 @@ const WelcomePage = () => {
                 Your trusted partner for accessible, personalized healthcare services.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/signup" className="btn btn-primary">
+                <Link to="/login" className="btn btn-accent">
                   Get Started
                   <ChevronRight size={18} className="ml-2" />
                 </Link>
-                <Link to="/services" className="btn btn-secondary">
+                <Link to="/signup" className="btn btn-secondary">
                   Our Services
                 </Link>
               </div>
@@ -47,8 +47,8 @@ const WelcomePage = () => {
       <section className="py-16 bg-base-200">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-base-content mb-4">Why Choose MediCare+</h2>
-            <p className="text-lg text-neutral-content max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold text-base-content mb-4">Why Choose Wellify</h2>
+            <p className="text-lg text-neutral max-w-2xl mx-auto">
               We're committed to providing exceptional healthcare services with a focus on quality, accessibility, and patient-centered care.
             </p>
           </div>
@@ -61,7 +61,7 @@ const WelcomePage = () => {
                   <Award className="text-white" size={24} />
                 </div>
                 <h3 className="card-title text-base-content">Expert Doctors</h3>
-                <p className="text-neutral-content">
+                <p className="text-neutral">
                   Our team consists of highly qualified healthcare professionals dedicated to providing the best care.
                 </p>
               </div>
@@ -74,7 +74,7 @@ const WelcomePage = () => {
                   <Activity className="text-white" size={24} />
                 </div>
                 <h3 className="card-title text-base-content">Quality Care</h3>
-                <p className="text-neutral-content">
+                <p className="text-neutral">
                   We maintain the highest standards of healthcare with state-of-the-art facilities and treatments.
                 </p>
               </div>
@@ -87,7 +87,7 @@ const WelcomePage = () => {
                   <Clock className="text-white" size={24} />
                 </div>
                 <h3 className="card-title text-base-content">24/7 Service</h3>
-                <p className="text-neutral-content">
+                <p className="text-neutral">
                   Healthcare needs don't wait, and neither do we. Our services are available around the clock.
                 </p>
               </div>
@@ -100,7 +100,7 @@ const WelcomePage = () => {
                   <Shield className="text-white" size={24} />
                 </div>
                 <h3 className="card-title text-base-content">Privacy Protected</h3>
-                <p className="text-neutral-content">
+                <p className="text-neutral">
                   Your health information is secure with our advanced encryption and privacy protocols.
                 </p>
               </div>
@@ -121,11 +121,11 @@ const WelcomePage = () => {
               />
             </div>
             <div className="lg:w-1/2">
-              <h2 className="text-3xl font-bold text-base-content mb-4">About MediCare+</h2>
-              <p className="text-lg text-neutral-content mb-6">
-                Founded in 2010, MediCare+ has been at the forefront of revolutionizing healthcare delivery. Our mission is to make quality healthcare accessible to everyone through innovative technology and compassionate service.
+              <h2 className="text-3xl font-bold text-base-content mb-4">About Wellify</h2>
+              <p className="text-lg text-neutral mb-6">
+                Founded in 2010, Wellify has been at the forefront of revolutionizing healthcare delivery. Our mission is to make quality healthcare accessible to everyone through innovative technology and compassionate service.
               </p>
-              <p className="text-lg text-neutral-content mb-6">
+              <p className="text-lg text-neutral mb-6">
                 With a team of over 200 specialists across multiple disciplines, we offer comprehensive care tailored to each patient's unique needs.
               </p>
               <div className="grid grid-cols-2 gap-4 mb-6">

@@ -65,12 +65,12 @@ export function UpcomingAppointments() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl shadow-lg w-full max-w-4xl mx-auto">
+    <div className="bg-base-200 p-6 rounded-xl shadow-lg w-full max-w-4xl mx-auto">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+        <h2 className="text-2xl font-bold text-primary">
           Upcoming Appointments
         </h2>
-        <p className="text-gray-600">
+        <p className="text-base-content/70">
           Managing your wellness journey with personalized care
         </p>
       </div>
@@ -79,7 +79,7 @@ export function UpcomingAppointments() {
         {appointments.map((appointment) => (
           <div
             key={appointment.id}
-            className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all"
+            className="bg-base-100 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all"
           >
             {/* Main appointment card content */}
             <div 
@@ -89,15 +89,15 @@ export function UpcomingAppointments() {
               <div className="flex items-center gap-3 mb-3">
                 <div className={`px-3 py-1 text-xs font-medium rounded-full ${
                   appointment.type === "video" 
-                    ? "bg-blue-100 text-blue-700" 
-                    : "bg-purple-100 text-purple-700"
+                    ? "bg-info/20 text-info" 
+                    : "bg-secondary/20 text-secondary"
                 }`}>
                   {appointment.type === "video" ? "Telehealth" : "In-person"}
                 </div>
                 <div className={`px-3 py-1 text-xs font-medium rounded-full ${
                   appointment.status === "confirmed" 
-                    ? "bg-green-100 text-green-700" 
-                    : "bg-amber-100 text-amber-700"
+                    ? "bg-success/20 text-success" 
+                    : "bg-warning/20 text-warning"
                 }`}>
                   {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
                 </div>
@@ -107,18 +107,18 @@ export function UpcomingAppointments() {
                 {/* Doctor Info */}
                 <div className="flex items-center gap-3 md:w-1/3">
                   <div className="relative">
-                    <div className="w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold text-lg shadow-md border-2 border-white">
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-br from-primary to-secondary text-base-100 font-bold text-lg shadow-md border-2 border-base-100">
                       {appointment.doctor.initials}
                     </div>
-                    <div className="absolute -bottom-1 -right-1 bg-indigo-600 text-white text-xs rounded-full px-1.5 py-0.5 border border-white">
+                    <div className="absolute -bottom-1 -right-1 bg-primary text-primary-content text-xs rounded-full px-1.5 py-0.5 border border-base-100">
                       {appointment.doctor.rating}
                     </div>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-base-content">
                       {appointment.doctor.name}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-base-content/70">
                       {appointment.doctor.specialty}
                     </p>
                   </div>
@@ -126,28 +126,28 @@ export function UpcomingAppointments() {
 
                 {/* Appointment Details */}
                 <div className="flex flex-1 flex-col gap-2 md:w-2/3">
-                  <div className="text-indigo-600 font-medium mb-1">
+                  <div className="text-primary font-medium mb-1">
                     {appointment.subject}
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     <div className="inline-flex items-center gap-2">
-                      <div className="p-1.5 bg-indigo-100 rounded-full">
-                        <CalendarDays className="h-4 w-4 text-indigo-600" />
+                      <div className="p-1.5 bg-primary/10 rounded-full">
+                        <CalendarDays className="h-4 w-4 text-primary" />
                       </div>
-                      <span className="text-sm text-gray-700">{appointment.date}</span>
+                      <span className="text-sm text-base-content/80">{appointment.date}</span>
                     </div>
                     <div className="inline-flex items-center gap-2">
-                      <div className="p-1.5 bg-indigo-100 rounded-full">
-                        <Clock className="h-4 w-4 text-indigo-600" />
+                      <div className="p-1.5 bg-primary/10 rounded-full">
+                        <Clock className="h-4 w-4 text-primary" />
                       </div>
-                      <span className="text-sm text-gray-700">{appointment.time}</span>
+                      <span className="text-sm text-base-content/80">{appointment.time}</span>
                     </div>
                     {appointment.type === "in-person" && (
                       <div className="inline-flex items-center gap-2 md:col-span-2">
-                        <div className="p-1.5 bg-indigo-100 rounded-full">
-                          <MapPin className="h-4 w-4 text-indigo-600" />
+                        <div className="p-1.5 bg-primary/10 rounded-full">
+                          <MapPin className="h-4 w-4 text-primary" />
                         </div>
-                        <span className="text-sm text-gray-700">
+                        <span className="text-sm text-base-content/80">
                           {appointment.doctor.location}
                         </span>
                       </div>
@@ -158,7 +158,7 @@ export function UpcomingAppointments() {
                 {/* Expand indicator */}
                 <div className="flex justify-end">
                   <ChevronRight 
-                    className={`h-5 w-5 text-gray-400 transform transition-transform ${
+                    className={`h-5 w-5 text-base-content/50 transform transition-transform ${
                       expandedAppointment === appointment.id ? "rotate-90" : ""
                     }`} 
                   />
@@ -168,30 +168,30 @@ export function UpcomingAppointments() {
 
             {/* Expanded details section */}
             {expandedAppointment === appointment.id && (
-              <div className="px-4 pb-4 pt-2 border-t border-gray-100">
+              <div className="px-4 pb-4 pt-2 border-t border-base-200">
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-2 text-gray-800">
-                      <Clipboard className="h-4 w-4 text-indigo-600" />
+                  <div className="bg-base-200 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2 text-base-content">
+                      <Clipboard className="h-4 w-4 text-primary" />
                       <span className="font-medium">Appointment Notes</span>
                     </div>
-                    <p className="text-sm text-gray-600">{appointment.notes}</p>
+                    <p className="text-sm text-base-content/70">{appointment.notes}</p>
                   </div>
                   
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-2 text-gray-800">
-                      <Shield className="h-4 w-4 text-indigo-600" />
+                  <div className="bg-base-200 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2 text-base-content">
+                      <Shield className="h-4 w-4 text-primary" />
                       <span className="font-medium">Preparation</span>
                     </div>
-                    <p className="text-sm text-gray-600">{appointment.preparation}</p>
+                    <p className="text-sm text-base-content/70">{appointment.preparation}</p>
                   </div>
                 </div>
                 
                 <div className="flex justify-end gap-3 mt-4">
-                  <button className="btn btn-sm text-gray-700 border-gray-300 hover:bg-gray-100 bg-transparent">
+                  <button className="btn btn-sm btn-ghost">
                     Reschedule
                   </button>
-                  <button className="btn btn-sm text-red-600 border-red-300 hover:bg-red-50 bg-transparent">
+                  <button className="btn btn-sm btn-error btn-outline">
                     Cancel
                   </button>
                 </div>
@@ -203,7 +203,7 @@ export function UpcomingAppointments() {
 
       {/* Footer Actions */}
       <div className="mt-8 flex justify-center">
-        <button className="btn px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 border-none text-white hover:shadow-lg shadow-md transition-all">
+        <button className="btn btn-primary">
           Schedule New Appointment
         </button>
       </div>
