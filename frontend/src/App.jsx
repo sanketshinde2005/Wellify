@@ -18,6 +18,7 @@ import FindDoctors from './pages/FindDoctors';
 import SettingsPage from './pages/SettingsPage';
 import { useThemeStore } from './store/useThemeStore';
 import ContactUs from './pages/ContactUs';
+import ChatBot from "./components/ChatBot.jsx"
 
 function App() {
   const { authUser, checkAuth } = useAuthstore();
@@ -57,7 +58,6 @@ function App() {
             <Route path="/welcome" element={<WelcomePage />} />
             <Route path='/predict' element={<PredictDisease />} />
             <Route path='/profile' element={<ProfilePage />} />
-
             <Route path="/appoint" element={authUser ? <BookAppointment /> : <Navigate to="/" />} />
             <Route path="/UpcomingAppointments" element={authUser ? <UpcomingAppointments /> : <Navigate to="/" />} />
             <Route path='/wellnesstips' element={authUser ? <WellnessTips /> : <Navigate to="/" />} />
@@ -66,9 +66,10 @@ function App() {
             <Route path='/settings' element={<SettingsPage />} />
             <Route path='/contactus' element={<ContactUs />} />
           </Routes>
+          <ChatBot />
         </div>
-      </main>
-    </div>
+      </main >
+    </div >
   );
 }
 

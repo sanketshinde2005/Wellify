@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import axiosInstance from "../lib/axios";
+// import axiosInstance from "../lib/axios";
+import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 
 const useAppointmentStore = create((set) => ({
@@ -51,7 +52,6 @@ const useAppointmentStore = create((set) => ({
         loading: false,
       }));
       
-
       toast.success("Appointment booked successfully");
     } catch (err) {
       console.error("Add Appointment Error:", err);

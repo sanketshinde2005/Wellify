@@ -29,7 +29,7 @@ const appointmentSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    notes: {
+    subject: {
       type: String,
       default: "",
     },
