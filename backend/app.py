@@ -8,18 +8,16 @@ import pickle
 # flask app
 app = Flask(__name__)
 CORS(app)
-
 # load database dataset===================================
-sym_des = pd.read_csv("C:/Users/prath/OneDrive/Desktop/Wellify/backend/datasets/symtoms_df.csv")
-precautions = pd.read_csv("C:/Users/prath/OneDrive/Desktop/Wellify/backend/datasets/precautions_df.csv")
-workout = pd.read_csv("C:/Users/prath/OneDrive/Desktop/Wellify/backend/datasets/workout_df.csv")
-description = pd.read_csv("C:/Users/prath/OneDrive/Desktop/Wellify/backend/datasets/description.csv")
-medications = pd.read_csv("C:/Users/prath/OneDrive/Desktop/Wellify/backend/datasets/medications.csv")
-diets = pd.read_csv("C:/Users/prath/OneDrive/Desktop/Wellify/backend/datasets/diets.csv")
-
+sym_des = pd.read_csv(r"C:\Code Club\Wellify\backend\datasets\symtoms_df.csv")
+precautions = pd.read_csv(r"C:\Code Club\Wellify\backend\datasets\precautions_df.csv")
+workout = pd.read_csv(r"C:\Code Club\Wellify\backend\datasets\workout_df.csv")
+description = pd.read_csv(r"C:\Code Club\Wellify\backend\datasets\description.csv")
+medications = pd.read_csv(r"C:\Code Club\Wellify\backend\datasets\medications.csv")
+diets = pd.read_csv(r"C:\Code Club\Wellify\backend\datasets\diets.csv")
 
 # load model===========================================
-svc = pickle.load(open('C:/Users/prath/OneDrive/Desktop/Wellify/backend/svc_model.pkl','rb'))
+svc = pickle.load(open(r"C:\Code Club\Wellify\backend\svc_model.pkl",'rb'))
 
 
 #============================================================
