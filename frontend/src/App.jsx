@@ -18,6 +18,8 @@ import FindDoctors from "./pages/FindDoctors";
 import SettingsPage from "./pages/SettingsPage";
 import { useThemeStore } from "./store/useThemeStore";
 import ContactUs from "./pages/ContactUs";
+import Chatbot from "./components/ChatBot";
+
 
 function App() {
   const { authUser, checkAuth } = useAuthstore();
@@ -92,7 +94,7 @@ function App() {
               }
             />
           </Routes>
-          <ChatBot />
+          <Chatbot />
         </div>
       </main>
     </div>
