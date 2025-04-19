@@ -186,7 +186,6 @@ export const updateProfile = async (req, res) => {
 
 export const checkAuth = (req, res) => {
     try {
-        // console.log(req.User)
         if (!req.User) {
             return res.status(401).json({ message: "Unauthorized: No user data found" });
         }

@@ -14,6 +14,7 @@ const useAppointmentStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await axiosInstance.get("/appointments/patientappointments");
+      console.log("Patient Appointments:", response.data);
       set({ patientAppointments: response.data, loading: false });
     } catch (err) {
       console.error("Fetch Patient Appointments Error:", err);
@@ -51,7 +52,7 @@ const useAppointmentStore = create((set) => ({
           : state.patientAppointments,
         loading: false,
       }));
-      
+
       toast.success("Appointment booked successfully");
     } catch (err) {
       console.error("Add Appointment Error:", err);
@@ -90,6 +91,7 @@ const useAppointmentStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       await axiosInstance.delete(`/appointments/${appointmentId}`);
+
       set((state) => ({
         doctorAppointments: state.doctorAppointments.filter((appt) => appt._id !== appointmentId),
         patientAppointments: state.patientAppointments.filter((appt) => appt._id !== appointmentId),
