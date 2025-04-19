@@ -18,6 +18,8 @@ import FindDoctors from "./pages/FindDoctors";
 import SettingsPage from "./pages/SettingsPage";
 import { useThemeStore } from "./store/useThemeStore";
 import ContactUs from "./pages/ContactUs";
+import Chatbot from "./components/Chatbot"; // Adjust the path as needed
+import ReportAnalyzer from "./components/ReportAnalyzer"; // Adjust the path if necessary
 
 function App() {
   const { authUser, checkAuth } = useAuthstore();
